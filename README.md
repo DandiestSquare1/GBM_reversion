@@ -9,5 +9,5 @@ inTrees (interpretable trees) is a framework for extracting, measuring, pruning,
 - R 
 
 ## Built With
-* [inTrees](https://sites.google.com/site/houtaodeng/intrees) - The framework used to extract rules from a tree ensemble
-* [Random GLM](https://labs.genetics.ucla.edu/horvath/htdocs/RGLM/) - Highly interpretable GLM ensemble
+* [inTrees](https://sites.google.com/site/houtaodeng/intrees) - The framework used to extract rules from tree ensembles
+* [Random GLM](https://labs.genetics.ucla.edu/horvath/htdocs/RGLM/) - Highly interpretable GLM ensembles
