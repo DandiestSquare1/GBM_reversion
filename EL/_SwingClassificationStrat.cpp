@@ -1,7 +1,7 @@
 inputs: 
 	bool debug(True)
 	,int LeftStrength(8)   //Sets the required number of bars on the left side of the pivot bar.
-	,int RightStrength(12) //Sets the required number of bars on the right side of the pivot bar.
+	,int RightStrength(4) //Sets the required number of bars on the right side of the pivot bar.
 	,int leftPad(0)
 	,int rightPad(0)
 	,SwingHiObject(High)
@@ -14,6 +14,101 @@ inputs:
 	,bool ReadWriteToDB(True)
 	,bool UseBucketData(False)
 	,int loadGroupId(1004);
+
+vars: 
+	 int seriesBarNumber(0)
+	,string dataSeriesSymbol("") //symbolName
+	,int lengthOfSeries(0)
+	,int chartType(0) //BarType where 0 = TickBar, 1 = Minute, 2 = Daily, 3 = Weekly, 4 = Monthly, 5 = Point & Figure, 6 = (reserved), 7 = (reserved), 8 = Kagi, 9 = Kase, 10 = Line Break, 11 = Momentum, 12 = Range, 13 = Renko, 14 = Second
+	,chartInterval(0) 
+	,string dateBarOpened("")
+	,string dayOfWeekBarOpened("")
+	,string dateTimeBarOpened("") 
+	,string timeBarOpenedhhmmss("")
+	,minutesBarWasOpen(0)
+	,double barOpenPrice(0)
+	,double barHighPrice(0)
+	,double barLowPrice(0)
+	,double barClosePrice(0)
+	,double minUnitPriceChange(0) //PriceScale = BigPointValue/PointValue 
+ 	,int settingMaxBarsBack(0)
+
+	,string strtimeBarOpened("")
+	,string strHHBarOpened("")
+	,string strMMBarOpened("")
+	,string strSSBarOpened("")
+	,string strDateBarOpened("")
+	,string strDateYYBarOpened("")
+	,string strDateMMBarOpened("")
+	,string strDateDDBarOpened("")
+	,string strDateDowBarOpened("")
+	,julianDateTime(0)
+	,numMinutesFromMidnit(0)
+	,numminutesBarWasOpn(0);
+
+
+//Pos. 1 barNumber
+//Returns the number of the current bar. 
+//Each bar, subsequent to the initial number of bars specified by the Maximum Bars Back setting, is assigned a sequential number; the initial bars specified by the setting are not numbered. 
+//For example, if Maximum Bars Back is set to 20, the 21st bar will be assigned a number of 1. 
+seriesBarNumber = CurrentBar + settingMaxBarsBack; //or CurrentBar + MaxBarsBack;
+
+//Pos. 2 symbol
+//Returns a string expression containing the name of the symbol that the study is applied to
+dataSeriesSymbol = SymbolName ;
+ 
+//Pos. 3 lengthOfSeries
+//Returns a numerical value indicating the actual number of bars of a data series on chart
+//If the series is not updating in real-time (no new bars appear), the keyword returns the same value on each calculation. If the chart updates in real-time the keyword returns the number of bars available by the moment script references the keyword. It means that the keyword possibly can return different values even during calculation within the same bar. 
+lengthOfSeries = seriesBarNumber ;//Symbol_Length ; 
+ 
+//Pos. 4 chartType
+//Returns a numerical value, indicating the resolution units of the data series that the study is applied to. 
+chartType = BarType ;
+{***********************************************************************************************************
+	values returned for each type of resolution units: 
+	  0 = Ticks (Ticks & Contracts)			8 = Kagi
+	  1 = Intra-Day (Seconds, Minutes, & Hours)	9 = (Reserved for future use)
+	  2 = Days						10 = Line Break
+	  3 = Weeks						11 = (Reserved for future use)
+	  4 = Months, Quarters, & Years			12 = (Reserved for future use)
+	  5 = Points, Changes, Point & Figure		13 = Renko
+	  6 = (Reserved for future use)			256 = Heikin Ashi
+	  7 = (Reserved for future use)	  
+***********************************************************************************************************}
+
+//Pos. 5 chartInterval
+//Returns a numerical value, indicating the number of resolution units (bar interval) of the data series that the study is applied to. 
+//Returns the number of Ticks, Contracts, Points, Changes, Seconds, Minutes, Hours, Days, Weeks, Months, Quarters, or Years, depending on the chart resolution; a value of 5 will be returned for a 5-second as well as for a 5-tick chart. 
+chartInterval = High[0] - Low[0] ; //If range bars in TradeStation use "BoxSize". If range bars in MultiCharts use "BarType"  
+
+//Pos. 6 dateBarOpened 
+strDateBarOpened = (FormatDate( "yyyy-MM-dd", ElDateToDateTime( Date[0] ) ));
+dateBarOpened = strDateBarOpened ;
+
+//Pos. 7 dayOfWeekBarOpened
+dayOfWeekBarOpened = (FormatDate( "ddd", ElDateToDateTime(Date[0])));
+
+//Pos. 8 timeBarOpened
+//TimeToMinutes function calculates the number of minutes from midnight for any 24-hour (HHMM) time value
+julianDateTime = DateToJulian(Date[0])+(TimeToMinutes(Time[0]) / 60 / 24 ) ; 
+//timeBarOpened =(FormatTime("HH:mm:ss tt",julianDateTime));
+//dateTimeBarOpened =DateTimeToString_Ms(DateTime[RightStrength]);
+dateTimeBarOpened = DateTimeToString(julianDateTime );
+  //DateTimeToString_Ms(DateTime[0])  will return a string value corresponding to the time and time of the current bar "5/28/2013 08:41:11.871". 
+
+//Pos. 11 barOpenPrice
+barOpenPrice = Open[0];
+
+//Pos. 12 barHighPrice
+barHighPrice = High[0];
+
+//Pos. 13 barLowPrice
+barLowPrice = Low[0];
+
+//Pos. 14 barClosePrice
+barClosePrice = Close[0];
+
 	
 vars: 	int intervalValue(4),
 		int intervalValueLarge(20),
@@ -2687,31 +2782,35 @@ SwingNULLRule_11 = DMIStoindBX[RightStrength-3]>14.232165 AND MaLGREindBIG[Right
 SwingNULLRule_12 = 1>2;//Else;
 
 
-if condition1 then begin
+if 1<2 {condition1} then begin
 If (DayNetProfitOK or DailyDollarStop = 0) and (WeekNetProfitOK or WeeklyDollarStop = 0) and OKToTradeBasedonTime then Begin
 	// Sell Case
 	If LongTradesOnly = False then begin
-		var: shortEntryLocation(0);		shortEntryLocation = open;//low[0]-.0001;//open; //swingHi[0,1]
+		var: shortEntryLocation(0), bool ShortFilter(False);		
+		shortEntryLocation = low[4]-.0001;//open; //swingHi[0,1]
+		
+		//is current high less than low 4 bars ago and is current close less than current open?
+		ShortFilter = high[0] < low[RightStrength] and close[0] <= open[0];
 //3. Trade Expressions
-  If SwingHiRule_1 then begin   SellShort ("SwingHiRule_1") Next Bar at shortEntryLocation limit;  End;
-  If SwingHiRule_2 then begin   SellShort ("SwingHiRule_2") Next Bar at shortEntryLocation limit;  End;
-  If SwingHiRule_3 then begin   SellShort ("SwingHiRule_3") Next Bar at shortEntryLocation limit;  End;
-  If SwingHiRule_4 then begin   SellShort ("SwingHiRule_4") Next Bar at shortEntryLocation limit;  End;
-  If SwingHiRule_5 then begin   SellShort ("SwingHiRule_5") Next Bar at shortEntryLocation limit;  End;
-  If SwingHiRule_6 then begin   SellShort ("SwingHiRule_6") Next Bar at shortEntryLocation limit;  End;
-  If SwingHiRule_7 then begin   SellShort ("SwingHiRule_7") Next Bar at shortEntryLocation limit;  End;
-  If SwingHiRule_8 then begin   SellShort ("SwingHiRule_8") Next Bar at shortEntryLocation limit;  End;
-  If SwingHiRule_9 then begin   SellShort ("SwingHiRule_9") Next Bar at shortEntryLocation limit;  End;
-  If SwingHiRule_10 then begin   SellShort ("SwingHiRule_10") Next Bar at shortEntryLocation limit;  End;
-  If SwingHiRule_11 then begin   SellShort ("SwingHiRule_11") Next Bar at shortEntryLocation limit;  End;
-  If SwingHiRule_12 then begin   SellShort ("SwingHiRule_12") Next Bar at shortEntryLocation limit;  End;
+  If SwingHiRule_1 AND ShortFilter then begin   SellShort ("SwingHiRule_1") Next Bar at shortEntryLocation stop;  End;//next bar at market;  End;//Next Bar at shortEntryLocation stop;  End;
+//  If SwingHiRule_2 AND ShortFilter then begin   SellShort ("SwingHiRule_2") Next Bar at shortEntryLocation stop;  End;
+//  If SwingHiRule_3 AND ShortFilter then begin   SellShort ("SwingHiRule_3") Next Bar at shortEntryLocation stop;  End;
+//  If SwingHiRule_4 AND ShortFilter then begin   SellShort ("SwingHiRule_4") Next Bar at shortEntryLocation stop;  End;
+//  If SwingHiRule_5 AND ShortFilter then begin   SellShort ("SwingHiRule_5") Next Bar at shortEntryLocation stop;  End;
+//  If SwingHiRule_6 AND ShortFilter then begin   SellShort ("SwingHiRule_6") Next Bar at shortEntryLocation stop;  End;
+//  If SwingHiRule_7 AND ShortFilter then begin   SellShort ("SwingHiRule_7") Next Bar at shortEntryLocation stop;  End;
+//  If SwingHiRule_8 AND ShortFilter then begin   SellShort ("SwingHiRule_8") Next Bar at shortEntryLocation stop;  End;
+//  If SwingHiRule_9 AND ShortFilter then begin   SellShort ("SwingHiRule_9") Next Bar at shortEntryLocation stop;  End;
+//  If SwingHiRule_10 AND ShortFilter then begin   SellShort ("SwingHiRule_10") Next Bar at shortEntryLocation stop;  End;
+//  If SwingHiRule_11 AND ShortFilter then begin   SellShort ("SwingHiRule_11") Next Bar at shortEntryLocation stop;  End;
+//  If SwingHiRule_12 AND ShortFilter then begin   SellShort ("SwingHiRule_12") Next Bar at shortEntryLocation stop;  End;
 
 	End;
 	// Buy Case 
 	If ShortTradesOnly = False then begin
 		var: longEntryLocation(0);		longEntryLocation = open;//high[0]+.0001; //swingHi[0,1]
 //3. Trade Expressions
-  If SwingNULLRule_1 then begin   Buy ("SwingNULLRul1") Next Bar at longEntryLocation limit;  End;
+{  If SwingNULLRule_1 then begin   Buy ("SwingNULLRul1") Next Bar at longEntryLocation limit;  End;
   If SwingNULLRule_2 then begin   Buy ("SwingNULLRul2") Next Bar at longEntryLocation limit;  End;
   If SwingNULLRule_3 then begin   Buy ("SwingNULLRul3") Next Bar at longEntryLocation limit;  End;
   If SwingNULLRule_4 then begin   Buy ("SwingNULLRul4") Next Bar at longEntryLocation limit;  End;
@@ -2723,13 +2822,65 @@ If (DayNetProfitOK or DailyDollarStop = 0) and (WeekNetProfitOK or WeeklyDollarS
   If SwingNULLRule_10 then begin   Buy ("SwingNULLRul10") Next Bar at longEntryLocation limit;  End;
   If SwingNULLRule_11 then begin   Buy ("SwingNULLRul11") Next Bar at longEntryLocation limit;  End;
   If SwingNULLRule_12 then begin   Buy ("SwingNULLRul12") Next Bar at longEntryLocation limit;  End;
+ }
 
 
 	End;
 End;
 end;
-	
 
+if 1 > 0 then begin	
+	Print(File("C:\Users\Neal\Documents\www.DAYTRADINGLOGIC.com\_neal\swing\EasyLanguage\condition_SwingHiRule_1.csv")
+		,"",NumToStr(Currentbar,0)
+		,",'"+dateTimeBarOpened+"'"
+		,",",Numtostr(barOpenPrice,8)
+		,",",Numtostr(barHighPrice,8)
+		,",",Numtostr(barLowPrice,8)
+		,",",Numtostr(barClosePrice,8)
+		,",AROONindMED[RightStrength-3]>-291.66665=,",NumToStr(AROONindMED[RightStrength-3],5)
+		,",DMIStoindSMALL[RightStrength-3]<=19.409605=,",NumToStr(DMIStoindSMALL[RightStrength-3],5)
+		,",MaALMAindBIG[RightStrength+2]<=0.000675=,",NumToStr(MaALMAindBIG[RightStrength+2],5)
+		,",SwingHiRule_1,",SwingHiRule_1
+		,",SwingHiRule_2,",SwingHiRule_2
+		,",SwingHiRule_3,",SwingHiRule_3
+		,",SwingHiRule_4,",SwingHiRule_4
+		,",SwingHiRule_5,",SwingHiRule_5
+		,",SwingHiRule_6,",SwingHiRule_6
+		,",SwingHiRule_7,",SwingHiRule_7
+		,",SwingHiRule_8,",SwingHiRule_8
+		,",SwingHiRule_9,",SwingHiRule_9
+		,",SwingHiRule_10,",SwingHiRule_10
+		,",SwingHiRule_11,",SwingHiRule_11
+		,",SwingHiRule_12,",SwingHiRule_12
+		//+ NewLine
+		);
+	end;
+
+{
+Plot1 ( ACindBIG[RightStrength+0], "ACiBIG+0" ) ;
+Plot2 ( AROONindMED[RightStrength-3], "AROMED-3" ) ;
+Plot3 ( AROONindSMALL[RightStrength-2], "AROALL-2" ) ;
+Plot4 ( BBDindBIG[RightStrength-1], "BBDBIG-1" ) ;
+Plot5 ( BBDindBIG[RightStrength-2], "BBDBIG-2" ) ;
+Plot6 ( BBDindMED[RightStrength-3], "BBDMED-3" ) ;
+Plot7 ( CCIindBIG[RightStrength+0], "CCIBIG+0" ) ;
+Plot8 ( CMIindBIG[RightStrength+9], "CMIBIG+9" ) ;
+Plot9 ( CMIindBXL[RightStrength+5], "CMIBXL+5" ) ;
+Plot10 ( CMIindMED[RightStrength+13], "CMIMED13" ) ;
+Plot11 ( CMIindMED[RightStrength+17], "CMIMED17" ) ;
+Plot12 ( DMIStoindBX[RightStrength-3], "DMIdBX-3" ) ;
+Plot13 ( DMIStoindSMALL[RightStrength-3], "DMIALL-3" ) ;
+Plot14 ( FRAMAindBXL[RightStrength+26], "FRABXL26" ) ;
+Plot15 ( FRAMAindMED[RightStrength+0], "FRAMED+0" ) ;
+Plot16 ( LINREGindMED[RightStrength-4], "LINMED-4" ) ;
+Plot17 ( MaLGREindBIG[RightStrength+7], "MaLBIG+7" ) ;
+Plot18 ( MaLGREindSMALL[RightStrength+0], "MaLALL+0" ) ;
+Plot19 ( MaMAMAindSMALL[RightStrength+1], "MaMALL+1" ) ;
+Plot20 ( pctBindSMALL[RightStrength-1], "pctALL-1" ) ;
+Plot21 ( PCTRindMED[RightStrength+1], "PCTMED+1" ) ;
+Plot22 ( RSIindSMALL[RightStrength+2], "RSIALL+2" ) ;
+Plot23 ( VIDYAindBX[RightStrength+4], "VIDdBX+4" ) ;
+}
 ///////////////////////////////////////////////////////////////
 //Indicator Exit section
 {If ExitCondition > 0 then begin
