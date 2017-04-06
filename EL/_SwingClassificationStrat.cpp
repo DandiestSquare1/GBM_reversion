@@ -2740,46 +2740,73 @@ bool SwingHiRule_9(False),
 bool SwingHiRule_10(False),
 bool SwingHiRule_11(False),
 bool SwingHiRule_12(False),
-bool SwingNULLRule_1(False),
-bool SwingNULLRule_2(False),
-bool SwingNULLRule_3(False),
-bool SwingNULLRule_4(False),
-bool SwingNULLRule_5(False),
-bool SwingNULLRule_6(False),
-bool SwingNULLRule_7(False),
-bool SwingNULLRule_8(False),
-bool SwingNULLRule_9(False),
-bool SwingNULLRule_10(False),
-bool SwingNULLRule_11(False),
-bool SwingNULLRule_12(False);
+bool SwingHiRule_13(False),
+bool SwingHiRule_14(False),
+bool SwingHiRule_15(False),
+bool SwingHiRule_16(False),
+bool SwingHiRule_17(False),
+bool SwingHiRule_18(False),
+bool SwingHiRule_19(False),
+bool SwingHiRule_20(False),
+bool SwingHiRule_21(False),
+bool SwingHiRule_22(False),
+bool SwingHiRule_23(False),
+bool SwingHiRule_24(False),
+bool SwingHiRule_25(False),
+bool SwingHiRule_26(False),
+bool SwingHiRule_27(False),
+bool SwingHiRule_28(False),
+bool SwingHiRule_29(False),
+bool SwingHiRule_30(False),
+bool SwingHiRule_31(False),
+bool SwingHiRule_32(False),
+bool SwingHiRule_33(False),
+bool SwingHiRule_34(False),
+bool SwingHiRule_35(False),
+bool SwingHiRule_36(False);
 
 
 
 //2. Conditions
-SwingHiRule_1 = AROONindMED[RightStrength-3]>-291.66665 AND DMIStoindSMALL[RightStrength-3]<=19.409605 AND MaALMAindBIG[RightStrength+2]<=0.000675;
-SwingHiRule_2 = BBDindMED[RightStrength-3]<=0.352 AND CCIindMED[RightStrength+0]>4698.732 AND CMOindBIG[RightStrength+15]<=84.38539;
-SwingHiRule_3 = AROONindMED[RightStrength-3]>-291.66665 AND RSIindSMALL[RightStrength+2]<=56.444135 AND LINREGindMED[RightStrength-4]<=-0.015;
-SwingHiRule_4 = BBDindBIG[RightStrength-4]<=0.556 AND RSIHULindMED[RightStrength-1]<=21.90589 AND RSIindBXL[RightStrength+23]>33.510635;
-SwingHiRule_5 = CMIindMED[RightStrength+17]<=85.714285 AND pctBindSMALL[RightStrength-1]<=9.436895;
-SwingHiRule_6 = VIDYAindBX[RightStrength+6]>0.521435 AND pctBindMED[RightStrength-1]>2.327105 AND MaHMAindBXL[RightStrength+1]>0.004365;
-SwingHiRule_7 = RSQRindSMALL[RightStrength+16]<=0.999755 AND MaHMAindBX[RightStrength-4]<=-0.00193 AND MaLGREindBIG[RightStrength+7]<=0.00778;
-SwingHiRule_8 = BBDindBIG[RightStrength-1]<=0.6225 AND MaMAMAindBIG[RightStrength+0]<=0.0018 AND MaMAMAindSMALL[RightStrength+0]>0.000525;
-SwingHiRule_9 = BBDindBIG[RightStrength-4]>0.3975 AND CDMIindBIG[RightStrength+15]<=81.019395 AND LINRGCindBIG[RightStrength-4]<=-0.001335;
-SwingHiRule_10 = VHFindMED[RightStrength+25]<=-0.17722 AND pctBindMED[RightStrength+1]<=99.98453 AND MaMAMAindBIG[RightStrength+0]>0.000575;
-SwingHiRule_11 = AROONindSMALL[RightStrength-2]>-416.66665 AND RSIHULindMED[RightStrength+23]>2.462285 AND RSIHULindMED[RightStrength-1]<=21.979895;
-SwingHiRule_12 = CCIindBX[RightStrength-1]<=12306.6845 AND ELSindBIG[RightStrength+1]>0.95038 AND MaLGREindBIG[RightStrength+7]<=0.007385;
-SwingNULLRule_1 = MaMAMAindSMALL[RightStrength+0]<=0.00053;
-SwingNULLRule_2 = AROONindSMALL[RightStrength-3]>416.66665 AND MaMAMAindSMALL[RightStrength+0]>0.000705;
-SwingNULLRule_3 = MaZLAGindMED[RightStrength+0]>0.000175 AND MaLGREindSMALL[RightStrength+0]>0.001095;
-SwingNULLRule_4 = MaZLAGindSMALL[RightStrength+0]>-0.000745 AND FRAMAindMED[RightStrength+0]<=0.00155;
-SwingNULLRule_5 = PCTRindMED[RightStrength+1]<=81.892695;
-SwingNULLRule_6 = AROONindSMALL[RightStrength-4]>250 AND MaZLAGindSMALL[RightStrength+0]<=-0.000745;
-SwingNULLRule_7 = AROONindSMALL[RightStrength+0]<=750 AND PCHANindMED[RightStrength+1]<=88.320545;
-SwingNULLRule_8 = PCHANindMED[RightStrength+4]<=151.04212 AND FRAMAindBIG[RightStrength+0]<=0.001505;
-SwingNULLRule_9 = MaZLAGindMED[RightStrength+0]<=0.000175 AND MaLGREindBXL[RightStrength+21]>0.007015 AND MaLGREindSMALL[RightStrength+0]>0.001095;
-SwingNULLRule_10 = pctBindSMALL[RightStrength-1]>9.436895 AND pctBindSMALL[RightStrength-1]<=9.55808;
-SwingNULLRule_11 = DMIStoindBX[RightStrength-3]>14.232165 AND MaLGREindBIG[RightStrength+7]<=0.00778;
-SwingNULLRule_12 = 1>2;//Else;
+
+SwingHiRule_1 = PCTRindBX[RightStrength+0]<=89.223335 AND FRAMAindMED[RightStrength+0]>0.00102 AND MaHMAindBX[RightStrength-4]<=-0.001685;
+//BBDindMED[RightStrength-3]>0.3545 and FRAMAindSMALL[RightStrength+0]>0.002155;
+{SwingHiRule_2 = LINRGCindBIG[RightStrength-4]<=-0.001345 AND MaLGREindBIG[RightStrength+7]<=0.00778 AND MaMAMAindMED[RightStrength-1]<=0.000525;
+SwingHiRule_3 = VIDYAindBX[RightStrength+10]>0.522805 AND MaHMAindBX[RightStrength-4]<=-0.001645 AND MaLGREindBIG[RightStrength+7]<=0.00739 AND MaMAMAindSMALL[RightStrength+0]>0.000615;
+SwingHiRule_4 = EMDindSMALL[RightStrength+1]<=266.894085 AND MaHMAindBX[RightStrength-4]<=-0.00193;
+SwingHiRule_5 = CMIindMED[RightStrength+13]>1.666665 AND DMIStoindBX[RightStrength-3]<=14.21093 AND MaLGREindBIG[RightStrength+7]<=0.00778;
+SwingHiRule_6 = CMIindBIG[RightStrength+21]<=98.27538 AND RSQRindSMALL[RightStrength+16]<=0.99957 AND LINRGCindBIG[RightStrength-4]<=-0.001335;
+SwingHiRule_7 = CMIindMED[RightStrength+13]>1.666665 AND DMIStoindBX[RightStrength-3]<=14.232165 AND MaLGREindBIG[RightStrength+7]<=0.00778;
+SwingHiRule_8 = RSQRindSMALL[RightStrength+16]<=0.99957 AND LINRGCindBIG[RightStrength-4]<=-0.001335 AND MaLGREindBIG[RightStrength+8]<=0.00761;
+SwingHiRule_9 = MaZLAGindMED[RightStrength+0]<=0.000165 AND RSQRindSMALL[RightStrength+16]<=0.99957 AND LINRGCindBIG[RightStrength-4]<=-0.001335;
+SwingHiRule_10 = CMIindBXL[RightStrength-1]<=86.07229 AND MaZLAGindMED[RightStrength+0]<=0.000165 AND LINRGCindBIG[RightStrength-4]<=-0.001335;
+SwingHiRule_11 = AROONindSMALL[RightStrength-3]<=416.66665 AND CDMIindBIG[RightStrength-1]<=56.32677 AND LINRGCindBIG[RightStrength-4]<=-0.001295;
+SwingHiRule_12 = RSQRindSMALL[RightStrength+16]<=0.99957 AND LINRGCindBIG[RightStrength-4]<=-0.001335 AND MaLGREindBIG[RightStrength+7]<=0.00778;
+SwingHiRule_13 = CMIindMED[RightStrength+13]>1.666665 AND RSIindBXL[RightStrength+23]>33.510635 AND DMIStoindBX[RightStrength-3]<=14.21093;
+SwingHiRule_14 = MaZLAGindMED[RightStrength+0]<=0.000165 AND RSQRindSMALL[RightStrength+16]<=0.99957 AND LINRGCindBIG[RightStrength-4]<=-0.001355;
+SwingHiRule_15 = RSQRindSMALL[RightStrength+16]<=0.999755 AND MaHMAindBX[RightStrength-4]<=-0.00193 AND MaLGREindBIG[RightStrength+7]<=0.00778;
+SwingHiRule_16 = VIDYAindBX[RightStrength+0]>0.524905 AND CDMIindBIG[RightStrength+15]<=81.019395 AND MaHMAindBX[RightStrength-4]<=-0.001645;
+SwingHiRule_17 = VHFindSMALL[RightStrength+21]>-0.75964 AND MaHMAindBX[RightStrength-4]<=-0.00193 AND MaMAMAindSMALL[RightStrength+0]>0.00055;
+SwingHiRule_18 = MaZLAGindMED[RightStrength+0]<=0.000165 AND RSQRindSMALL[RightStrength+16]<=0.99957 AND LINRGCindBIG[RightStrength-4]<=-0.001335;
+SwingHiRule_19 = VIDYAindBX[RightStrength+6]>0.521435 AND RSIHULindSMALL[RightStrength+28]<=98.99003 AND MaHMAindBXL[RightStrength+1]>0.003805;
+SwingHiRule_20 = RSQRindSMALL[RightStrength+16]<=0.999755 AND MaHMAindBX[RightStrength-4]<=-0.00193 AND MaLGREindBXL[RightStrength+7]<=0.007635;
+SwingHiRule_21 = VIDYAindBX[RightStrength+6]>0.521435 AND DMIStoindBX[RightStrength-3]<=15.46268 AND MaMAMAindBXL[RightStrength+7]>-0.029625;
+SwingHiRule_22 = CMIindBIG[RightStrength+21]<=98.27538 AND MaZLAGindMED[RightStrength+0]<=0.000165 AND RSQRindSMALL[RightStrength+16]<=0.99957 AND LINRGCindBIG[RightStrength-4]<=-0.001335;
+SwingHiRule_23 = RSQRindSMALL[RightStrength+16]<=0.99957 AND LINRGCindBIG[RightStrength-4]<=-0.001335;
+SwingHiRule_24 = CCIindBXL[RightStrength+1]<=25396.9705 AND RSIHULindSMALL[RightStrength+28]<=98.99003 AND MaHMAindBXL[RightStrength+1]>0.003805;
+SwingHiRule_25 = AROONindSMALL[RightStrength-4]<=-250 AND VIDYAindBX[RightStrength+6]>0.521435 AND MaHMAindBXL[RightStrength+1]>0.00381;
+SwingHiRule_26 = VHFindMED[RightStrength+25]<=-0.17722 AND VIDYAindBX[RightStrength+6]>0.52171 AND MaZLAGindBXL[RightStrength+1]>0.004455;
+SwingHiRule_27 = RSIindBXL[RightStrength+23]>33.510635 AND LINREGindSMALL[RightStrength-2]<=-0.1175;
+SwingHiRule_28 = VIDYAindBX[RightStrength+6]>0.521435 AND EMDindMED[RightStrength-2]>19.033815 AND LINRGCindBXL[RightStrength+1]>0.004245;
+SwingHiRule_29 = VIDYAindBX[RightStrength+6]>0.521435 AND pctBindMED[RightStrength-1]>2.327105 AND MaHMAindBXL[RightStrength+1]>0.004365;
+SwingHiRule_30 = VIDYAindBX[RightStrength+6]>0.52171 AND EMDindMED[RightStrength-1]>33.916045 AND LINRGCindBXL[RightStrength+1]>0.004215;
+SwingHiRule_31 = CCIindBXL[RightStrength+1]<=25396.9705 AND EMDindMED[RightStrength-2]>19.033815 AND LINRGCindBXL[RightStrength+1]>0.004245;
+SwingHiRule_32 = PCTRindBX[RightStrength+0]<=89.223335 AND FRAMAindMED[RightStrength+0]>0.00102 AND MaHMAindBX[RightStrength-4]<=-0.001685;
+SwingHiRule_33 = VIDYAindBX[RightStrength+10]>0.522305 AND LINRGCindMED[RightStrength+14]<=0.00241 AND MaHMAindBXL[RightStrength+1]>0.004365;
+SwingHiRule_34 = AROONindMED[RightStrength-4]<=625 AND VIDYAindBX[RightStrength+6]>0.521435 AND LINRGCindBXL[RightStrength+1]>0.004245;
+SwingHiRule_35 = CDMIindMED[RightStrength+23]>-64.62346 AND MaZLAGindSMALL[RightStrength+0]<=-0.001335;
+SwingHiRule_36 = CCIindBIG[RightStrength+0]>7634.908 AND LINRGCindSMALL[RightStrength+6]>-0.001305 AND LRSIindSMALL[RightStrength-4]<=0.56333;
+}
 
 
 if 1<2 {condition1} then begin
@@ -2787,23 +2814,51 @@ If (DayNetProfitOK or DailyDollarStop = 0) and (WeekNetProfitOK or WeeklyDollarS
 	// Sell Case
 	If LongTradesOnly = False then begin
 		var: shortEntryLocation(0), bool ShortFilter(False);		
-		shortEntryLocation = low[4]-.0001;//open; //swingHi[0,1]
+		shortEntryLocation = low[0]-.0001;//open; //swingHi[0,1]
 		
 		//is current high less than low 4 bars ago and is current close less than current open?
-		ShortFilter = high[0] < low[RightStrength] and close[0] <= open[0];
+		ShortFilter = high[0] < low[RightStrength] and close[0] <= open[0] ;
+			//and high[RightStrength] > high[RightStrength+1] and high[RightStrength] > high[RightStrength-1]
+			//and high[RightStrength] > high[RightStrength+2] and high[RightStrength] > high[RightStrength-2]
+			//and high[RightStrength] > high[RightStrength+3] and high[RightStrength] > high[RightStrength-3];
+			//and high[RightStrength] > high[RightStrength+4] and high[RightStrength] > high[RightStrength-4] ;
 //3. Trade Expressions
   If SwingHiRule_1 AND ShortFilter then begin   SellShort ("SwingHiRule_1") Next Bar at shortEntryLocation stop;  End;//next bar at market;  End;//Next Bar at shortEntryLocation stop;  End;
-//  If SwingHiRule_2 AND ShortFilter then begin   SellShort ("SwingHiRule_2") Next Bar at shortEntryLocation stop;  End;
-//  If SwingHiRule_3 AND ShortFilter then begin   SellShort ("SwingHiRule_3") Next Bar at shortEntryLocation stop;  End;
-//  If SwingHiRule_4 AND ShortFilter then begin   SellShort ("SwingHiRule_4") Next Bar at shortEntryLocation stop;  End;
-//  If SwingHiRule_5 AND ShortFilter then begin   SellShort ("SwingHiRule_5") Next Bar at shortEntryLocation stop;  End;
-//  If SwingHiRule_6 AND ShortFilter then begin   SellShort ("SwingHiRule_6") Next Bar at shortEntryLocation stop;  End;
-//  If SwingHiRule_7 AND ShortFilter then begin   SellShort ("SwingHiRule_7") Next Bar at shortEntryLocation stop;  End;
-//  If SwingHiRule_8 AND ShortFilter then begin   SellShort ("SwingHiRule_8") Next Bar at shortEntryLocation stop;  End;
-//  If SwingHiRule_9 AND ShortFilter then begin   SellShort ("SwingHiRule_9") Next Bar at shortEntryLocation stop;  End;
-//  If SwingHiRule_10 AND ShortFilter then begin   SellShort ("SwingHiRule_10") Next Bar at shortEntryLocation stop;  End;
-//  If SwingHiRule_11 AND ShortFilter then begin   SellShort ("SwingHiRule_11") Next Bar at shortEntryLocation stop;  End;
-//  If SwingHiRule_12 AND ShortFilter then begin   SellShort ("SwingHiRule_12") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_2 AND ShortFilter then begin   SellShort ("SwingHiRule_2") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_3 AND ShortFilter then begin   SellShort ("SwingHiRule_3") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_4 AND ShortFilter then begin   SellShort ("SwingHiRule_4") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_5 AND ShortFilter then begin   SellShort ("SwingHiRule_5") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_6 AND ShortFilter then begin   SellShort ("SwingHiRule_6") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_7 AND ShortFilter then begin   SellShort ("SwingHiRule_7") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_8 AND ShortFilter then begin   SellShort ("SwingHiRule_8") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_9 AND ShortFilter then begin   SellShort ("SwingHiRule_9") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_10 AND ShortFilter then begin   SellShort ("SwingHiRule_10") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_11 AND ShortFilter then begin   SellShort ("SwingHiRule_11") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_12 AND ShortFilter then begin   SellShort ("SwingHiRule_12") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_13 AND ShortFilter then begin   SellShort ("SwingHiRule_13") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_14 AND ShortFilter then begin   SellShort ("SwingHiRule_14") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_15 AND ShortFilter then begin   SellShort ("SwingHiRule_15") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_16 AND ShortFilter then begin   SellShort ("SwingHiRule_16") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_17 AND ShortFilter then begin   SellShort ("SwingHiRule_17") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_18 AND ShortFilter then begin   SellShort ("SwingHiRule_18") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_19 AND ShortFilter then begin   SellShort ("SwingHiRule_19") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_20 AND ShortFilter then begin   SellShort ("SwingHiRule_20") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_21 AND ShortFilter then begin   SellShort ("SwingHiRule_21") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_22 AND ShortFilter then begin   SellShort ("SwingHiRule_22") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_23 AND ShortFilter then begin   SellShort ("SwingHiRule_23") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_24 AND ShortFilter then begin   SellShort ("SwingHiRule_24") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_25 AND ShortFilter then begin   SellShort ("SwingHiRule_25") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_26 AND ShortFilter then begin   SellShort ("SwingHiRule_26") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_27 AND ShortFilter then begin   SellShort ("SwingHiRule_27") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_28 AND ShortFilter then begin   SellShort ("SwingHiRule_28") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_29 AND ShortFilter then begin   SellShort ("SwingHiRule_29") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_30 AND ShortFilter then begin   SellShort ("SwingHiRule_30") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_31 AND ShortFilter then begin   SellShort ("SwingHiRule_31") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_32 AND ShortFilter then begin   SellShort ("SwingHiRule_32") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_33 AND ShortFilter then begin   SellShort ("SwingHiRule_33") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_34 AND ShortFilter then begin   SellShort ("SwingHiRule_34") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_35 AND ShortFilter then begin   SellShort ("SwingHiRule_35") Next Bar at shortEntryLocation stop;  End;
+  //If SwingHiRule_36 AND ShortFilter then begin   SellShort ("SwingHiRule_36") Next Bar at shortEntryLocation stop;  End; 
 
 	End;
 	// Buy Case 
@@ -2883,26 +2938,90 @@ Plot23 ( VIDYAindBX[RightStrength+4], "VIDdBX+4" ) ;
 }
 ///////////////////////////////////////////////////////////////
 //Indicator Exit section
-{If ExitCondition > 0 then begin
-if MP = 1 and PercentChg < 0 then begin
+
+//MESA Adaptive Moving Average (MAMA)
+//https://drive.google.com/drive/u/0/folders/0B4WuHPHd7tSacm50QWxrR2pWaGs
+
+Inputs: Price((H+L)/2);
+vars:FastLimit(0), SlowLimit(0);
+FastLimit = 1.2 ;
+SlowLimit = .005 ;
+Vars: Smooth(0),
+	Detrender(0),
+	I1(0),
+	Q1(0),
+	jI(0),
+	jQ(0),
+	I2(0),
+	Q2(0),
+	Re(0),
+	Im(0),
+	Period(0),
+	SmoothPeriod(0),
+	Phase(0),
+	DeltaPhase(0),
+	alpha(0),
+	MAMA(0),
+	FAMA(0);
+If CurrentBar > 5 then begin
+	Smooth = (4*Price + 3*Price[1] + 2*Price[2] + Price[3]) / 10;
+	Detrender = (.0962*Smooth + .5769*Smooth[2] - .5769*Smooth[4] - .0962*Smooth[6])*(.075*Period[1] + .54);
+	{Compute InPhase and Quadrature components}
+	Q1 = (.0962*Detrender + .5769*Detrender[2] - .5769*Detrender[4] - .0962*Detrender[6])*(.075*Period[1] + .54);
+	I1 = Detrender[3];
+	{Advance the phase of I1 and Q1 by 90 degrees}
+	jI = (.0962*I1 + .5769*I1[2] - .5769*I1[4] - .0962*I1[6])*(.075*Period[1] + .54);
+	jQ = (.0962*Q1 + .5769*Q1[2] - .5769*Q1[4] - .0962*Q1[6])*(.075*Period[1] + .54);
+	{Phasor addition for 3 bar averaging)}
+	I2 = I1 - jQ;
+	Q2 = Q1 + jI;
+	{Smooth the I and Q components before applying the discriminator}
+	I2 = .2*I2 + .8*I2[1];
+	Q2 = .2*Q2 + .8*Q2[1];
+	{Homodyne Discriminator}
+	Re = I2*I2[1] + Q2*Q2[1];
+	Im = I2*Q2[1] - Q2*I2[1];
+	Re = .2*Re + .8*Re[1];
+	Im = .2*Im + .8*Im[1];
+	If Im <> 0 and Re <> 0 then Period = 360/ArcTangent(Im/Re);
+	If Period > 1.5*Period[1] then Period = 1.5*Period[1];
+	If Period < .67*Period[1] then Period = .67*Period[1];
+	If Period < 6 then Period = 6;
+	If Period > 50 then Period = 50;
+	Period = .2*Period + .8*Period[1];
+	SmoothPeriod = .33*Period + .67*SmoothPeriod[1];
+	If I1 <> 0 then Phase = (ArcTangent(Q1 / I1));
+	DeltaPhase = Phase[1] - Phase;
+	If DeltaPhase < 1 then DeltaPhase = 1;
+	alpha = FastLimit / DeltaPhase;
+	If alpha < SlowLimit then alpha = SlowLimit;
+	MAMA = alpha*Price + (1 - alpha)*MAMA[1];
+	FAMA = .5*alpha*MAMA + (1 - .5*alpha)*FAMA[1];
+	//Plot1(MAMA, "MAMA");
+	//Plot2(FAMA, "FAMA");
+End;
+
+
+If ExitCondition > 0 then begin
+{if MP = 1 and PercentChg < 0 then begin
 			sell ("Exit1 . ") next bar at market;
 end;
 if MP = -1 and PercentChg > 0 then begin
 			buytocover ("Exit1. ") next bar at market;			
-end;
+end;}
 	If ExitCondition = 1 then begin
-		if MP = 1 and aaMACDDiff[0] > 0 and aaMACDDiff[1] < 0 then begin
+		if MP = 1 and MAMA[0] < FAMA[0] and MAMA[1] > FAMA[1] then begin
 			sell ("Exit1 .") next bar at market;
 			if MP = 1 and UseSounds and LastBarOnChart then
 				ExitSoundOK = (PlaySound(ExitSound));
 		end;
-		if MP = -1 and aaMACDDiff[0] < 0 and aaMACDDiff[1] > 0 then begin
+		if MP = -1 and MAMA[0] > FAMA[0] and MAMA[1] < FAMA[1] then begin
 			buytocover ("Exit1.") next bar at market;
 			if MP = -1 and UseSounds and LastBarOnChart then
 				ExitSoundOK = (PlaySound(ExitSound));
 		end;
 	End;
-	If ExitCondition = 2 then begin
+{	If ExitCondition = 2 then begin
 		if MP = 1 and aaMACDDiff[0] > 0 and aaMACDDiff[1] > 0 and aaMACDDiff[2] < 0 then begin
 			sell ("Exit2 .") next bar at market;
 			if MP = 1 and UseSounds and LastBarOnChart then
@@ -2961,9 +3080,9 @@ end;
 			if MP = -1 and UseSounds and LastBarOnChart then
 				ExitSoundOK = (PlaySound(ExitSound));
 		end;
-	End;
+	End;}
 
-End;}
+End;
 ///////////////////////////////////////////////////////////////
 //Time Exit Section
 If StrategyStopTime > 0 and Time > StrategyStopTime then begin
