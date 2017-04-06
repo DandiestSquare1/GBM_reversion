@@ -236,13 +236,25 @@ condition1 = seriesBarNumber > settingMaxBarsBack ;
 	
 	//plot bar numbers
 	if ShowBarNumbers then begin
-		plotBarNumTxt = text_new(Date[RightStrength]
-				,Time[RightStrength]
-				,SwingHiObject[RightStrength]+(minUnitPriceChange * 10)
-				,numToStr(seriesBarNumber-RightStrength,0)
-					);
-		Text_SetStyle(plotBarNumTxt,2,1);
-		text_setcolor(plotBarNumTxt,RGB(255,128,0)); 
+		if mod(seriesBarNumber-RightStrength,10) = 0 then begin
+			plotBarNumTxt = text_new(Date[RightStrength]
+					,Time[RightStrength]
+					,round(SwingHiObject[RightStrength],2)-(minUnitPriceChange * 1)
+					,numToStr(seriesBarNumber-RightStrength,0)
+						);
+			Text_SetStyle(plotBarNumTxt,2,1);
+			text_setcolor(plotBarNumTxt,RGB(225,28,90)); 
+			end
+		else begin
+			plotBarNumTxt = text_new(Date[RightStrength]
+					,Time[RightStrength]
+					,round(SwingLoObject[RightStrength],2)-(minUnitPriceChange * 1)
+					,"."//numToStr(seriesBarNumber-RightStrength,0)
+						);
+			Text_SetStyle(plotBarNumTxt,2,1);
+			text_setcolor(plotBarNumTxt,RGB(225,28,90)); 
+		
+		end;
 	end;
 
 
