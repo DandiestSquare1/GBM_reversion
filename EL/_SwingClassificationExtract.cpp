@@ -26,8 +26,8 @@ vars:
 	,int BarsAgoSLoBar(0)
 	,int SwingHiAtBarNum(0)
 	,int SwingLoAtBarNum(0)
-	,lastSwingHiBarNum(0)
-	,lastSwingLoBarNum(0)
+	,int lastSwingHiBarNum(0)
+	,int lastSwingLoBarNum(0)
 	,counterSH(0)
 	,counterSL(0)
 	,sizeOfLastSwing(0)
@@ -39,7 +39,16 @@ vars:
 	//,bool debug(false) 
 	,bool debugToCommentLog(True)
 	,bool debugToPrintLog(True) 
-	,bool debugToCSV(True);
+	,bool debugToCSV(True)
+	,int swingBarHiCount(0)
+	,int swingBarLoCount(0);
+
+//BarsAgoSHiBar = 0;
+//BarsAgoSLoBar = 0;
+//SwingHiAtBarNum = 0;
+//SwingLoAtBarNum = 0;
+swingBarHiCount = 0;
+swingBarLoCount = 0;
 
 array: swingHi[50,3](0)
 	,swingLo[50,3](0);
@@ -63,18 +72,18 @@ rightPatternCounter = 0;
 
 inputs: 
 	bool debug(True)
-	,int LeftStrength(        8)   //Sets the required number of bars on the left side of the pivot bar.
-	,int RightStrength(        12) //Sets the required number of bars on the right side of the pivot bar.
+	,int LeftStrength(8)   //Sets the required number of bars on the left side of the pivot bar.
+	,int RightStrength(12) //Sets the required number of bars on the right side of the pivot bar.
 	,int leftPad(0)
 	,int rightPad(0)
 	,SwingHiObject(High)
 	,SwingLoObject(Low)
-	,bool ShowSwings(False)
-	,bool ShowBarNum(False)
+	,bool ShowSwings(True)
+	,bool ShowSwingBarNum(True)
 	,bool ShowObjVal(False)
 	,bool ShowObjDiff(False)
 	,bool ShowBarNumbers(False)
-	,bool ReadWriteToDB(True)
+	,bool ReadWriteToDB(False)
 	,bool UseBucketData(False)
 	,int loadGroupId(1004);
 	
@@ -245,206 +254,196 @@ leftPadAmt = minUnitPriceChange * leftPad;
 rightPadAmt = minUnitPriceChange * rightPad;
 
 var: bool leftHiPatternExist(FALSE),bool rightHiPatternExist(FALSE);
+if condition1 and calcSwingHi then begin
+	while leftStengthCounter <= LeftStrength AND leftPatternCounter <= LeftStrength begin
+		//detect left pattern of SwingHi
+		leftHiPatternExist = (SwingHiObject[RightStrength] >= SwingHiObject[RightStrength+leftStengthCounter]);
 
-	if condition1 and calcSwingHi then begin
-		//Start loop 1 
-		while leftStengthCounter <= LeftStrength AND leftPatternCounter <= LeftStrength begin
-			leftHiPatternExist = (SwingHiObject[RightStrength] >= SwingHiObject[RightStrength+leftStengthCounter]);//detect left pattern of SwingHi
+		if leftHiPatternExist then
+				leftPatternCounter = leftPatternCounter + 1
+			else
+				leftPatternCounter = 0 ;
+		
+		leftStengthCounter = leftStengthCounter + 1 ;
 
-			if leftHiPatternExist then
-					leftPatternCounter = leftPatternCounter + 1
+		//detect right pattern of SwingHi
+		while leftPatternCounter = LeftStrength and rightStengthCounter <= RightStrength  begin 
+			rightHiPatternExist = (SwingHiObject[RightStrength] > SwingHiObject[RightStrength-rightStengthCounter])
+									and (SwingHiObject[RightStrength] - Lowest(SwingLoObject,RightStrength)) >= rightPadAmt
+									and (SwingHiObject[RightStrength] - Highest(SwingHiObject,RightStrength-1)) >= leftPadAmt;
+
+			if rightHiPatternExist then
+					rightPatternCounter = rightPatternCounter + 1
 				else
-					leftPatternCounter = 0 ;
+					rightPatternCounter = 0 ;
 			
-			leftStengthCounter = leftStengthCounter + 1 ;
-			
-			//Start inner loop 
-			while leftPatternCounter = LeftStrength and rightStengthCounter <= RightStrength  begin 
-				rightHiPatternExist = (SwingHiObject[RightStrength] > SwingHiObject[RightStrength-rightStengthCounter])
-										and (SwingHiObject[RightStrength] - Lowest(SwingLoObject,RightStrength)) >= rightPadAmt
-										and (SwingHiObject[RightStrength] - Highest(SwingHiObject,RightStrength-1)) >= leftPadAmt;//detect right pattern of SwingHi
+			if rightPatternCounter = RightStrength then begin 
 
-				if rightHiPatternExist then
-						rightPatternCounter = rightPatternCounter + 1
-					else
-						rightPatternCounter = 0 ;
+				SwingHiAtBarNum = seriesBarNumber-RightStrength;
+				swingBarHiCount = seriesBarNumber-RightStrength-swingLo[0,0];	
+				lastSwingHiBarNum = seriesBarNumber-RightStrength;
+	
+				for counterSH = 0 to 49 begin
+					swingHi[50-counterSH,0] = swingHi[50-counterSH-1,0];
+					swingHi[50-counterSH,1] = swingHi[50-counterSH-1,1];
+					swingHi[50-counterSH,2] = swingHi[50-counterSH-1,2];
+					swingHi[50-counterSH,3] = swingHi[50-counterSH-1,3];
+				end; 
+				swingHi[0,0] = lastSwingHiBarNum ; //barNum
+				swingHi[0,1] = SwingHiObject[RightStrength] ; //price
+				swingHi[0,2] = Date[RightStrength] ; //date
+				swingHi[0,3] = Time[RightStrength] ; //time	
 				
-				if rightPatternCounter = RightStrength then begin 
-					//Set
-					SwingHiAtBarNum = seriesBarNumber-RightStrength;// <-- located swingHi to plot
-					//plotMarker
-					if ShowSwings then begin
+				if ShowSwings then begin
 					plot1[RightStrength](SwingHiObject[RightStrength], "swingHiBar");
-					//plotText
-					end;
-					if ShowBarNum then begin
-						plotSwingHiTxt = text_new(Date[RightStrength]
-								,Time[RightStrength]
-								,SwingHiObject[RightStrength]
-								,numToStr(seriesBarNumber-RightStrength,0)
-								 );
-						Text_SetStyle(plotSwingHiTxt,2,1);
-						text_setcolor(plotSwingHiTxt,RGB(255,128,0)); 
-						//text_setSize(plotSwingHiTxt,8);
-					end;				
+					plot2[RightStrength](SwingHiObject[RightStrength]+(minUnitPriceChange*60), "TopMargin");
+				end;
+				
+				if swingHi[1,1] > 0 then begin
 					if ShowObjDiff then begin
-						Value1 = text_new(Date[RightStrength]
-								,Time[RightStrength]
-								,SwingHiObject[RightStrength]+2
-								,numToStr(AbsValue(High[RightStrength]-Low[BarsAgoSLoBar+1]),2)
-								 );
+						Value1 = text_new(swingHi[1,2]//Date[RightStrength]
+								,swingHi[1,3]//Time[RightStrength]
+								,swingHi[1,1]+(minUnitPriceChange*17)//SwingHiObject[RightStrength]+(minUnitPriceChange*17)
+								,"Size: +"+numToStr(swingLo[0,1]-swingHi[1,1],4)+" / "+numToStr((swingLo[0,0]-swingHi[1,0]),0)+" bars"
+									);
 						Text_SetStyle(Value1 ,2,1);
 						text_setcolor(Value1 ,RGB(255,128,0)); 
-						//text_setSize(Value1 ,7);
 					end;
+					
 					if ShowObjVal then begin
-						Value2 = text_new(Date[RightStrength]
-								,Time[RightStrength]
-								,SwingHiObject[RightStrength]+4.5
-								,numToStr(SwingHiObject[RightStrength],2)
-								 );
+						Value2 = text_new(swingHi[1,2]//Date[RightStrength]
+								,swingHi[1,3]//Time[RightStrength]
+								,swingHi[1,1]+(minUnitPriceChange*9)//SwingHiObject[RightStrength]+(minUnitPriceChange*9) //Price
+								,"Price: "+numToStr(swingHi[1,1],4)
+									);
 						Text_SetStyle(Value2 ,2,1);
 						text_setcolor(Value2 ,RGB(255,128,0)); 
-						//text_setSize(Value2 ,8);
 					end;
-					lastSwingHiBarNum = seriesBarNumber-RightStrength;// <-- *** located swingHi to export to data set ***
-		
-					for counterSH = 0 to 49
-					begin
-						swingHi[50-counterSH,0] = swingHi[50-counterSH-1,0];
-						swingHi[50-counterSH,1] = swingHi[50-counterSH-1,1];
-						swingHi[50-counterSH,2] = swingHi[50-counterSH-1,2];
-						swingHi[50-counterSH,3] = swingHi[50-counterSH-1,3];
-						
-					end; 
-					swingHi[0,0] = lastSwingHiBarNum ; 	    //barNum
-					swingHi[0,1] = SwingHiObject[RightStrength] ; //price
-					swingHi[0,2] = Date[RightStrength] ; 	    //date
-					swingHi[0,3] = Time[RightStrength] ; 	    //time		
-					
-				end; //End inner loop 
+				end;
 				
-				rightStengthCounter = rightStengthCounter + 1 ;
-				
-			end; //End inner loop 
+				if ShowSwingBarNum then begin
+					plotSwingHiTxt = text_new(swingHi[1,2]//Date[RightStrength]
+							,swingHi[1,3]//Time[RightStrength]
+							,swingHi[1,1]+(minUnitPriceChange*1)//SwingHiObject[RightStrength]+(minUnitPriceChange*1)
+							,"BarNum: "+numToStr(swingHi[1,0],0)
+								);
+					Text_SetStyle(plotSwingHiTxt,2,1);
+					text_setcolor(plotSwingHiTxt,RGB(255,128,0)); 
+				end;
+			end; 
 
-			//reset to original value 
-			rightStengthCounter = 1;//RightStrength;
-			rightPatternCounter = 0; 
-			rightHiPatternExist = False;
-			
-			BarsAgoSHiBar = seriesBarNumber-SwingHiAtBarNum;	
+			rightStengthCounter = rightStengthCounter + 1 ;
+		end;
 		
-		end ;//End loop 1
-
-		//reset to original value 
-		leftStengthCounter = 1;//LeftStrength;
-		leftPatternCounter = 0;
-		leftHiPatternExist = False;
-		calcSwingHi = False;
-		calcSwingLo = True;
-
+		BarsAgoSHiBar = seriesBarNumber-SwingHiAtBarNum;
+		rightStengthCounter = 1;
+		rightPatternCounter = 0; 
+		rightHiPatternExist = False;	
 	end;
+	
+	leftStengthCounter = 1;
+	leftPatternCounter = 0;
+	leftHiPatternExist = False;
+	calcSwingHi = False;
+	calcSwingLo = True;
+
+end;
 
 var: bool leftLoPatternExist(FALSE),bool rightLoPatternExist(FALSE);
-	if condition1 and calcSwingLo then begin
-		//Start loop 1
-		while leftStengthCounter <= LeftStrength AND leftPatternCounter <= LeftStrength begin
-			leftLoPatternExist = (Low[RightStrength] <= Low[RightStrength+leftStengthCounter]) ;//detect left pattern of SwingLo
-								//SwingLoObject
-			if leftLoPatternExist then
-					leftPatternCounter = leftPatternCounter + 1
-				else
-					leftPatternCounter = 0 ;
-			
-			leftStengthCounter = leftStengthCounter + 1 ;
-			
-			//Start inner loop 
-			while leftPatternCounter = LeftStrength and rightStengthCounter <= RightStrength  begin 
-				rightLoPatternExist = (SwingLoObject[RightStrength] < SwingLoObject[RightStrength-rightStengthCounter])
-										and (Highest(SwingHiObject,RightStrength) - SwingLoObject[RightStrength]) >= rightPadAmt
-										and (Lowest(SwingLoObject,RightStrength-1) - SwingLoObject[RightStrength]) >= leftPadAmt;//detect right pattern of SwingLo
+if condition1 and calcSwingLo then begin
+	while leftStengthCounter <= LeftStrength AND leftPatternCounter <= LeftStrength begin
+		//detect left pattern of SwingLo
+		leftLoPatternExist = (Low[RightStrength] <= Low[RightStrength+leftStengthCounter]);
 
-				if rightLoPatternExist then
-						rightPatternCounter = rightPatternCounter + 1
-					else
-						rightPatternCounter = 0 ;
+		if leftLoPatternExist then
+				leftPatternCounter = leftPatternCounter + 1
+			else
+				leftPatternCounter = 0 ;
+		
+		leftStengthCounter = leftStengthCounter + 1 ;
+		
+		//detect right pattern of SwingLo
+		while leftPatternCounter = LeftStrength and rightStengthCounter <= RightStrength  begin 
+			rightLoPatternExist = (SwingLoObject[RightStrength] < SwingLoObject[RightStrength-rightStengthCounter])
+									and (Highest(SwingHiObject,RightStrength) - SwingLoObject[RightStrength]) >= rightPadAmt
+									and (Lowest(SwingLoObject,RightStrength-1) - SwingLoObject[RightStrength]) >= leftPadAmt;
+ 
+			if rightLoPatternExist then
+					rightPatternCounter = rightPatternCounter + 1
+				else
+					rightPatternCounter = 0 ;
+			
+			if rightPatternCounter = RightStrength then begin 
+
+				SwingLoAtBarNum = seriesBarNumber-RightStrength;
+				swingBarLoCount = (swingHi[0,0])-(swingLo[1,0]);
+				lastSwingLoBarNum = seriesBarNumber-RightStrength;
+
+				for counterSH = 0 to 49 begin
+					swingLo[50-counterSH,0] = swingLo[50-counterSH-1,0];
+					swingLo[50-counterSH,1] = swingLo[50-counterSH-1,1];
+					swingLo[50-counterSH,2] = swingLo[50-counterSH-1,2];
+					swingLo[50-counterSH,3] = swingLo[50-counterSH-1,3];
+				end; 
+				swingLo[0,0] = lastSwingLoBarNum ;  //barNum
+				swingLo[0,1] = SwingLoObject[RightStrength] ; //price
+				swingLo[0,2] = Date[RightStrength] ; //date
+				swingLo[0,3] = Time[RightStrength] ; //time
 				
-				if rightPatternCounter = RightStrength then begin 
-					//Set
-					SwingLoAtBarNum = seriesBarNumber-RightStrength;// <-- located swingLo to plot
-					//plotMarker
-					if ShowSwings then begin
-					plot2[RightStrength](SwingLoObject[RightStrength], "swingLowBar");
-					end;
-					//plotText
-					if ShowBarNum then begin
-						plotSwingLoTxt = text_new(Date[RightStrength]
-								,Time[RightStrength]
-								,SwingLoObject[RightStrength]
-								,numToStr(seriesBarNumber-RightStrength,0)
-								 );
-						text_SetStyle(plotSwingLoTxt,2,0);
-						text_setcolor(plotSwingLoTxt,RGB(255,128,0));
-						//text_setSize(plotSwingLoTxt,8);
-					end;
+				if ShowSwings then begin
+					plot3[RightStrength](SwingLoObject[RightStrength], "swingLowBar");
+					plot4[RightStrength](SwingLoObject[RightStrength]-(minUnitPriceChange*60), "LowMargin");
+				end;
+				
+				
+				if swingLo[1,1] > 0 then begin
 					if ShowObjDiff then begin
-						Value3 = text_new(Date[RightStrength]
-								,Time[RightStrength]
-								,SwingLoObject[RightStrength]-2
-								,numToStr(AbsValue(Low[RightStrength]-High[BarsAgoSHiBar]),2)
-								 );
+						Value3 = text_new(swingLo[1,2]//Date[RightStrength]
+								,swingLo[1,3]//Time[RightStrength]
+								,swingLo[1,1]-(minUnitPriceChange*17)//SwingLoObject[RightStrength]-(minUnitPriceChange*17)
+								,"Size: +"+numToStr(swingHi[0,1]-swingLo[1,1],4)+" / "+numToStr((swingHi[0,0]-swingLo[1,0]),0)+" bars"
+							 	);
 						Text_SetStyle(Value3 ,2,0);
 						text_setcolor(Value3 ,RGB(255,128,0)); 
-						//text_setSize(Value3 ,7);
 					end;				
+	
 					if ShowObjVal then begin
-						Value4 = text_new(Date[RightStrength]
-								,Time[RightStrength]
-								,SwingLoObject[RightStrength]-4.5
-								,numToStr(SwingLoObject[RightStrength],2)
-								 );
+						Value4 = text_new(swingLo[1,2]//Date[RightStrength]
+								,swingLo[1,3]//Time[RightStrength]
+								,swingLo[1,1]-(minUnitPriceChange*9)//SwingLoObject[RightStrength]-(minUnitPriceChange*9)
+								,"Price: "+numToStr(swingLo[1,1],4)
+							 	);
 						Text_SetStyle(Value4 ,2,0);
 						text_setcolor(Value4 ,RGB(255,128,0)); 
-						//text_setSize(Value4 ,8);	
-					end;		
-					lastSwingLoBarNum = seriesBarNumber-RightStrength;// <-- *** located swingLo to export to data set ***
+					end;
+				end;		
+
+				if ShowSwingBarNum then begin
+					plotSwingLoTxt = text_new(swingLo[1,2]//Date[RightStrength]
+							,swingLo[1,3]//Time[RightStrength]
+							,swingLo[1,1]-(minUnitPriceChange*1)//SwingLoObject[RightStrength]-(minUnitPriceChange*1)
+							,"BarNum: "+numToStr(swingLo[1,0],0)
+							 );
+					text_SetStyle(plotSwingLoTxt,2,0);
+					text_setcolor(plotSwingLoTxt,RGB(255,128,0));
+				end;
+			end; 
+
+			rightStengthCounter = rightStengthCounter + 1 ;
+		end; 
 		
-					for counterSH = 0 to 49
-					begin
-						swingLo[50-counterSH,0] = swingLo[50-counterSH-1,0];
-						swingLo[50-counterSH,1] = swingLo[50-counterSH-1,1];
-						swingLo[50-counterSH,2] = swingLo[50-counterSH-1,2];
-						swingLo[50-counterSH,3] = swingLo[50-counterSH-1,3];
-						//_swingLo[1+counter] = _swingLo[0+counter];
-					end; 
-					swingLo[0,0] = lastSwingLoBarNum ;		    //barNum
-					swingLo[0,1] = SwingLoObject[RightStrength] ; //price
-					swingLo[0,2] = Date[RightStrength]  ;	    //date
-					swingLo[0,3] = Time[RightStrength] ;	    //time
-
-				end;//End inner loop 
-				
-				rightStengthCounter = rightStengthCounter + 1 ;
-
-			end; //End inner loop 
-
-			//reset to original value 
-			rightStengthCounter = 1;//RightStrength;
-			rightPatternCounter = 0;
-			rightLoPatternExist = False; 	
-			
-			BarsAgoSLoBar = seriesBarNumber-SwingLoAtBarNum;
-
-		end ;//End loop 1
-
-		//reset to original value 
-		leftStengthCounter = 1;//LeftStrength;
-		leftPatternCounter = 0;
-		leftLoPatternExist = False;
-		calcSwingHi = True;
-		calcSwingLo = False;
+		BarsAgoSLoBar = seriesBarNumber-SwingLoAtBarNum;
+		rightStengthCounter = 1;
+		rightPatternCounter = 0;
+		rightLoPatternExist = False; 	
 	end;
+	
+	leftStengthCounter = 1;
+	leftPatternCounter = 0;
+	leftLoPatternExist = False;
+	calcSwingHi = True;
+	calcSwingLo = False;
+end;
 
 	if CurrentBar + MaxBarsBack + 1 > MaxBarsBack + 1 then begin
 
