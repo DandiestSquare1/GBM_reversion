@@ -265,13 +265,30 @@ var:
 leftPadAmt = minUnitPriceChange * leftPad;			
 rightPadAmt = minUnitPriceChange * rightPad;
 
+var: bool AllowNewSwingHi(FALSE),bool AllowNewSwingLo(FALSE);
+
+If condition1 = False then swingHi[0,0] = 0; 
+If condition1 = False then swingLo[0,0] = 0; 
+
+if condition1 then begin
+	if swingLo[0,0] > swingHi[0,0] or swingHi[0,0] = 0  then
+					AllowNewSwingHi = TRUE
+				else
+					AllowNewSwingHi = FALSE ;
+	
+	if swingHi[0,0] > swingLo[0,0] or swingLo[0,0] = 0  then
+					AllowNewSwingLo = TRUE
+				else
+					AllowNewSwingLo = FALSE ;
+end; 
+
 var: bool leftHiPatternExist(FALSE),bool rightHiPatternExist(FALSE);
 if condition1 and calcSwingHi then begin
 	while leftStengthCounter <= LeftStrength AND leftPatternCounter <= LeftStrength begin
 		//detect left pattern of SwingHi
 		leftHiPatternExist = (SwingHiObject[RightStrength] >= SwingHiObject[RightStrength+leftStengthCounter]);
 
-		if leftHiPatternExist then
+		if leftHiPatternExist and AllowNewSwingHi then
 				leftPatternCounter = leftPatternCounter + 1
 			else
 				leftPatternCounter = 0 ;
@@ -316,7 +333,7 @@ if condition1 and calcSwingHi then begin
 						Value1 = text_new(swingHi[1,2]//Date[RightStrength]
 								,swingHi[1,3]//Time[RightStrength]
 								,swingHi[1,1]+(minUnitPriceChange*17)//SwingHiObject[RightStrength]+(minUnitPriceChange*17)
-								,"Size: +"+numToStr(swingLo[0,1]-swingHi[1,1],4)+" / "+numToStr((swingLo[0,0]-swingHi[1,0]),0)+" bars"
+								,"Size: "+numToStr(swingLo[0,1]-swingHi[1,1],4)+" / "+numToStr((swingLo[0,0]-swingHi[1,0]),0)+" bars"
 									);
 						Text_SetStyle(Value1 ,2,1);
 						text_setcolor(Value1 ,RGB(255,128,0)); 
@@ -367,7 +384,7 @@ if condition1 and calcSwingLo then begin
 		//detect left pattern of SwingLo
 		leftLoPatternExist = (Low[RightStrength] <= Low[RightStrength+leftStengthCounter]);
 
-		if leftLoPatternExist then
+		if leftLoPatternExist and AllowNewSwingLo then
 				leftPatternCounter = leftPatternCounter + 1
 			else
 				leftPatternCounter = 0 ;
@@ -388,9 +405,9 @@ if condition1 and calcSwingLo then begin
 			if rightPatternCounter = RightStrength then begin 
 
 				SwingLoAtBarNum = seriesBarNumber-RightStrength;
-				swingBarLoCount = (swingHi[0,0])-(swingLo[1,0]);
+				swingBarLoCount = swingHi[0,0]-swingLo[1,0];
 				lastSwingLoBarNum = seriesBarNumber-RightStrength;
-
+									
 				for counterSH = 0 to 49 begin
 					swingLo[50-counterSH,0] = swingLo[50-counterSH-1,0];
 					swingLo[50-counterSH,1] = swingLo[50-counterSH-1,1];
@@ -541,8 +558,8 @@ Denormalized = NormalizedValue * (max[x] - min[x]) + min[x]
 
 linearlyRescale = (limit - floor) / (max[x] - min[x]) * (x - max[x]) + limit // where [x] is some lookback period and range is "hard coded" by setting [floor] and [limit] values to literals
 
-rateOfChange = (x / x[Length] - 1 ) * 100
-percentChange = (x - x[Length] ) / x[Length] ;
+rateOfChange = (x / x[old] - 1 ) * 100
+percentChange = ( (x - x[old]) / x[old]-1 ) * 100
 
 rsiNetChgAvg = (x - x[Length] ) / Length ;
 ************************************************************************************************** 
