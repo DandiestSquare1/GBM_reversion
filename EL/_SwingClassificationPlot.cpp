@@ -233,29 +233,6 @@ minUnitPriceChange = minmove / pricescale; //PriceScale = BigPointValue / PointV
 settingMaxBarsBack = MaxBarsBack + 1 ;
 
 condition1 = seriesBarNumber > settingMaxBarsBack ;
-	
-	//plot bar numbers
-	if ShowBarNumbers then begin
-		if mod(seriesBarNumber-RightStrength,10) = 0 then begin
-			plotBarNumTxt = text_new(Date[RightStrength]
-					,Time[RightStrength]
-					,round(SwingHiObject[RightStrength],2)-(minUnitPriceChange * 1)
-					,numToStr(seriesBarNumber-RightStrength,0)
-						);
-			Text_SetStyle(plotBarNumTxt,2,1);
-			text_setcolor(plotBarNumTxt,RGB(225,28,90)); 
-			end
-		else begin
-			plotBarNumTxt = text_new(Date[RightStrength]
-					,Time[RightStrength]
-					,round(SwingLoObject[RightStrength],2)-(minUnitPriceChange * 1)
-					,"."//numToStr(seriesBarNumber-RightStrength,0)
-						);
-			Text_SetStyle(plotBarNumTxt,2,1);
-			text_setcolor(plotBarNumTxt,RGB(225,28,90)); 
-		
-		end;
-	end;
 
 
 var: 
@@ -266,9 +243,6 @@ leftPadAmt = minUnitPriceChange * leftPad;
 rightPadAmt = minUnitPriceChange * rightPad;
 
 var: bool AllowNewSwingHi(FALSE),bool AllowNewSwingLo(FALSE);
-
-If condition1 = False then swingHi[0,0] = 0; 
-If condition1 = False then swingLo[0,0] = 0; 
 
 if condition1 then begin
 	if swingLo[0,0] > swingHi[0,0] or swingHi[0,0] = 0  then
@@ -309,7 +283,7 @@ if condition1 and calcSwingHi then begin
 			if rightPatternCounter = RightStrength then begin 
 
 				SwingHiAtBarNum = seriesBarNumber-RightStrength;
-				swingBarHiCount = seriesBarNumber-RightStrength-swingLo[0,0];	
+				swingBarHiCount = swingLo[0,0]-swingHi[1,0];
 				lastSwingHiBarNum = seriesBarNumber-RightStrength;
 	
 				for counterSH = 0 to 49 begin
@@ -408,11 +382,11 @@ if condition1 and calcSwingLo then begin
 				swingBarLoCount = swingHi[0,0]-swingLo[1,0];
 				lastSwingLoBarNum = seriesBarNumber-RightStrength;
 									
-				for counterSH = 0 to 49 begin
-					swingLo[50-counterSH,0] = swingLo[50-counterSH-1,0];
-					swingLo[50-counterSH,1] = swingLo[50-counterSH-1,1];
-					swingLo[50-counterSH,2] = swingLo[50-counterSH-1,2];
-					swingLo[50-counterSH,3] = swingLo[50-counterSH-1,3];
+				for counterSL = 0 to 49 begin
+					swingLo[50-counterSL,0] = swingLo[50-counterSL-1,0];
+					swingLo[50-counterSL,1] = swingLo[50-counterSL-1,1];
+					swingLo[50-counterSL,2] = swingLo[50-counterSL-1,2];
+					swingLo[50-counterSL,3] = swingLo[50-counterSL-1,3];
 				end; 
 				swingLo[0,0] = lastSwingLoBarNum ;  //barNum
 				swingLo[0,1] = SwingLoObject[RightStrength] ; //price
@@ -564,3 +538,361 @@ percentChange = ( (x - x[old]) / x[old]-1 ) * 100
 rsiNetChgAvg = (x - x[Length] ) / Length ;
 ************************************************************************************************** 
 **************************************************************************************************}
+
+vars: 	int intervalValue(4),
+		int intervalValueLarge(20),
+		int intervalLimit(1000),
+		int lookBackLength(350),
+		int scaleLimit(1000),
+		int scaleFloor(0),
+		int i_Len(0),
+		double indLengthA(0),
+		double indLengthB(0),
+		double indLengthC(0),
+		double indLengthD(0),
+		double indLengthE(0),
+		double i_Multiple(0);
+i_Len = 4;
+i_Multiple = 2;
+indLengthA = ROUND(i_Len, 0) + MOD(ROUND(i_Len, 0), 2);
+indLengthB = ROUND(indLengthA*0.75 + indLengthA*0.5, 0)+MOD(ROUND(indLengthA*0.75 + indLengthA*0.5, 0), 2);
+indLengthC = ROUND(indLengthA*2.25 + indLengthA*0.5, 0)+MOD(ROUND(indLengthA*2.25 + indLengthA*0.5, 0), 2);
+indLengthD = ROUND(indLengthA*4.75 + indLengthA*0.5, 0)+MOD(ROUND(indLengthA*4.75 + indLengthA*0.5, 0), 2);
+indLengthE = ROUND(indLengthA*7.75 + indLengthA*0.5, 0)+MOD(ROUND(indLengthA*7.75 + indLengthA*0.5, 0), 2);
+
+//Determine bar direction. barRecordType = Up(1), Down(-1) or Neutral(0)
+var: int barRecordType(0);
+If barClosePrice > barOpenPrice then 
+	barRecordType = 1
+Else If barClosePrice < barOpenPrice then 
+	barRecordType = -1
+Else begin	
+	barRecordType = 0;
+end;
+
+var:SwingHi_Size(0),SwingHi_BarCount(0),SwingLo_Size(0),SwingLo_BarCount(0);
+
+SwingHi_Size = swingLo[0,1]-swingHi[1,1];
+SwingHi_BarCount = swingLo[0,0]-swingHi[1,0];
+
+SwingLo_Size = swingHi[0,1]-swingLo[1,1];
+SwingLo_BarCount = swingHi[0,0]-swingLo[1,0];
+
+//SwingHi_Size = swingLo[0,1]-swingHi[1,1]
+//SwingLo_Size = swingHi[0,1]-swingLo[1,1]
+
+//SwingHi_BarCount = swingLo[0,0]-swingHi[1,0]
+//SwingLo_BarCount = swingHi[0,0]-swingLo[1,0]
+
+//lastSwingHiBarNum = seriesBarNumber-RightStrength;
+//lastSwingLoBarNum = seriesBarNumber-RightStrength;
+
+//SwingHiAtBarNum = seriesBarNumber-RightStrength;
+//SwingLoAtBarNum = seriesBarNumber-RightStrength;
+
+//BarsAgoSHiBar = seriesBarNumber-SwingHiAtBarNum
+//BarsAgoSLoBar = seriesBarNumber-SwingLoAtBarNum
+
+//seriesBarNumber-RightStrength where seriesBarNumber is CurrentBar + MaxBarsBack + 1
+
+
+//classify all swings. swingRecordType = Up(1), Down(-1) or Neutral(0)
+var: int swingRecordType(0);
+If BarsAgoSHiBar = RightStrength + (swingLo[0,0]-swingHi[1,0]) then 
+	swingRecordType = 1 
+Else If BarsAgoSLoBar = RightStrength + (swingHi[0,0]-swingLo[1,0]) then 
+	swingRecordType = -1
+Else begin	
+	swingRecordType = 0;
+end;
+
+//Determine swingSize for swings
+var: double swingSize(0);
+If BarsAgoSHiBar = RightStrength + (swingLo[0,0]-swingHi[1,0]) then 
+	swingSize = swingLo[0,1]-swingHi[1,1]
+Else If BarsAgoSLoBar = RightStrength + (swingHi[0,0]-swingLo[1,0]) then 
+	swingSize = swingHi[0,1]-swingLo[1,1]
+Else begin	
+	swingSize = 0;
+end;
+
+//classify subset of all swings to determine which swings are > Threshold
+//barClass = Up(2), Down(-2) or Neutral(0)
+var: swingSizeThreshold(0) 
+	,int barClass(0)
+	,int BarsAgoClassHi(0)
+	,int BarsAgoClassLo(0);
+	swingSizeThreshold = (barHighPrice-barLowPrice)*3.0 ; // <--- classify swings greater and less than threshold. Note that this only works for fixed differnece chart types like range bars or momentum bars, not time, tick, etc.
+If 		swingRecordType[0] =  1  and BarsAgoSHiBar[0] = RightStrength + (swingLo[0,0]-swingHi[1,0]) then begin //and AbsValue(swingSize) >= swingSizeThreshold
+	barClass = 2;
+	BarsAgoClassHi = RightStrength + (swingLo[0,0]-swingHi[1,0]); 
+end
+Else If swingRecordType[0] = -1  and BarsAgoSLoBar[0] = RightStrength + (swingHi[0,0]-swingLo[1,0]) then begin //and AbsValue(swingSize) >= swingSizeThreshold
+	barClass = -2;
+	BarsAgoClassLo = RightStrength + (swingHi[0,0]-swingLo[1,0]);
+end
+Else begin	
+	barClass = 0;
+	BarsAgoClassHi = seriesBarNumber-(swingLo[0,0]-swingHi[1,0]);
+	BarsAgoClassLo = seriesBarNumber-(swingHi[0,0]-swingLo[1,0]);
+end;
+
+
+
+	
+
+
+
+var: int num(0), plot_location(0),plot_value(0), barClassStr(""), plot_n_bars_back(0);
+
+num = seriesBarNumber-RightStrength;
+plot_location = 105;
+//plot_value = BarsAgoSHiBar[0] - RightStrength;//plus or minus n //((CurrentBar + MaxBarsBack + 1)-RightStrength)-SwingHiAtBarNum;
+
+if swingHi[0,0] > swingLo[0,0] then begin 
+	plot_n_bars_back =  (swingHi[0,0]-swingHi[1,0]) +RightStrength;//SwingHi_BarCount;
+end
+else begin
+	plot_n_bars_back = (swingLo[0,0]-swingLo[1,0]) +RightStrength;//SwingLo_BarCount;
+end;
+
+if swingHi[0,0] > swingLo[0,0] then begin 
+	plot_value = SwingHi_BarCount;//BarsAgoSHiBar[0] - RightStrength;//plus or minus n //((CurrentBar + MaxBarsBack + 1)-RightStrength)-SwingHiAtBarNum;
+end
+else begin
+	plot_value = SwingLo_BarCount;//(swingLo[0,0]-swingLo[1,0]) +RightStrength;//SwingLo_BarCount;
+end;
+
+//if swingLo[0,0] > swingHi[0,0] or swingHi[0,0] = 0  then
+//if swingHi[0,0] > swingLo[0,0] or swingLo[0,0] = 0  then
+
+
+{
+ BarsAgoSHiBar = seriesBarNumber-SwingHiAtBarNum;
+ SwingHiAtBarNum = seriesBarNumber-RightStrength;
+ seriesBarNumber = CurrentBar + settingMaxBarsBack; 
+ settingMaxBarsBack = MaxBarsBack + 1 ;
+}	
+vars: Swing_Size(0),BarCount(0);
+			
+if 1 = 0 then begin
+	barClassStr = "1";
+end
+else if BarsAgoSHiBar[0] - RightStrength  = 0 then begin
+	barClassStr = "Hi-Entry-P0 "+NumToStr(plot_value,0)+" "+NumToStr(SwingHi_Size,4);
+	Swing_Size = SwingHi_Size;
+	BarCount = SwingHi_BarCount;
+end
+else if BarsAgoSHiBar[0] - (RightStrength -1)= 0 then begin
+	barClassStr = "Hi-Entry-P1 "+NumToStr(plot_value,0)+" "+NumToStr(SwingHi_Size,4);
+	Swing_Size = SwingHi_Size;
+	BarCount = SwingHi_BarCount;
+end
+else if BarsAgoSHiBar[0] - (RightStrength +1)= 0 then begin
+	barClassStr = "Hi-Entry-M1 "+NumToStr(plot_value,0)+" "+NumToStr(SwingHi_Size,4);
+	Swing_Size = SwingHi_Size;
+	BarCount = SwingHi_BarCount;
+end
+else if BarsAgoSHiBar[0] - (RightStrength +2)= 0 then begin
+	barClassStr = "Hi-Entry-M2 "+NumToStr(plot_value,0)+" "+NumToStr(SwingHi_Size,4);
+	Swing_Size = SwingHi_Size;
+	BarCount = SwingHi_BarCount;
+end
+
+else if BarsAgoSLoBar[0] - RightStrength = 0 then begin
+	barClassStr = "Lo-Entry-P0 "+NumToStr(plot_value,0)+" "+NumToStr(SwingLo_Size,4);
+	Swing_Size = SwingLo_Size;
+	BarCount = SwingLo_BarCount;
+end
+else if BarsAgoSLoBar[0] - (RightStrength -1)= 0 then begin
+	barClassStr = "Lo-Entry-P1 "+NumToStr(plot_value,0)+" "+NumToStr(SwingLo_Size,4);
+	Swing_Size = SwingLo_Size;
+	BarCount = SwingLo_BarCount;
+end
+else if BarsAgoSLoBar[0] - (RightStrength +1)= 0 then begin
+	barClassStr = "Lo-Entry-M1 "+NumToStr(plot_value,0)+" "+NumToStr(SwingLo_Size,4);
+	Swing_Size = SwingLo_Size;
+	BarCount = SwingLo_BarCount;
+end
+else if BarsAgoSLoBar[0] - (RightStrength +2)= 0 then begin
+	barClassStr = "Lo-Entry-M2 "+NumToStr(plot_value,0)+" "+NumToStr(SwingLo_Size,4);
+	Swing_Size = SwingLo_Size;
+	BarCount = SwingLo_BarCount;
+end
+else begin
+	barClassStr = "0";
+	Swing_Size = 0;
+	BarCount = 0;
+end;	
+
+
+	//plot bar numbers
+	if ShowBarNumbers and swingLo[1,1] > 0 and swingHi[1,1] > 0 then begin
+		if mod(num,10) = 0 then begin
+			plotBarNumTxt = text_new(Date[plot_n_bars_back]
+					,Time[plot_n_bars_back]
+					,round(SwingHiObject[RightStrength],2)-(minUnitPriceChange * plot_location)
+					,barClassStr//numToStr(plot_value,0)
+						);
+			Text_SetStyle(plotBarNumTxt,2,1);
+			text_setcolor(plotBarNumTxt,RGB(225,28,90)); 
+			end
+		else If mod(num[1],10) = 0 then begin
+			plotBarNumTxt = text_new(Date[plot_n_bars_back]
+					,Time[plot_n_bars_back]
+					,round(SwingHiObject[RightStrength],2)-(minUnitPriceChange * (plot_location+10))
+					,barClassStr//numToStr(plot_value,0)
+						);
+			Text_SetStyle(plotBarNumTxt,2,1);
+			text_setcolor(plotBarNumTxt,RGB(225,28,90)); 
+			end
+		else If mod(num[2],10) = 0 then begin
+			plotBarNumTxt = text_new(Date[plot_n_bars_back]
+					,Time[plot_n_bars_back]
+					,round(SwingHiObject[RightStrength],2)-(minUnitPriceChange * (plot_location+20))
+					,barClassStr//numToStr(plot_value,0)
+						);
+			Text_SetStyle(plotBarNumTxt,2,1);
+			text_setcolor(plotBarNumTxt,RGB(225,28,90)); 
+			end
+		else If mod(num[3],10) = 0 then begin
+			plotBarNumTxt = text_new(Date[plot_n_bars_back]
+					,Time[plot_n_bars_back]
+					,round(SwingHiObject[RightStrength],2)-(minUnitPriceChange * (plot_location+30))
+					,barClassStr//numToStr(plot_value,0)
+						);
+			Text_SetStyle(plotBarNumTxt,2,1);
+			text_setcolor(plotBarNumTxt,RGB(225,28,90)); 
+			end
+		else If mod(num[4],10) = 0 then begin
+			plotBarNumTxt = text_new(Date[plot_n_bars_back]
+					,Time[plot_n_bars_back]
+					,round(SwingHiObject[RightStrength],2)-(minUnitPriceChange * (plot_location+40))
+					,barClassStr//numToStr(plot_value,0)
+						);
+			Text_SetStyle(plotBarNumTxt,2,1);
+			text_setcolor(plotBarNumTxt,RGB(225,28,90)); 
+			end
+		else If mod(num[5],10) = 0 then begin
+			plotBarNumTxt = text_new(Date[plot_n_bars_back]
+					,Time[plot_n_bars_back]
+					,round(SwingHiObject[RightStrength],2)-(minUnitPriceChange * (plot_location+50))
+					,barClassStr//numToStr(plot_value,0)
+						);
+			Text_SetStyle(plotBarNumTxt,2,1);
+			text_setcolor(plotBarNumTxt,RGB(225,28,90)); 
+			end
+		else If mod(num[6],10) = 0 then begin
+			plotBarNumTxt = text_new(Date[plot_n_bars_back]
+					,Time[plot_n_bars_back]
+					,round(SwingHiObject[RightStrength],2)-(minUnitPriceChange * (plot_location+60))
+					,barClassStr//numToStr(plot_value,0)
+						);
+			Text_SetStyle(plotBarNumTxt,2,1);
+			text_setcolor(plotBarNumTxt,RGB(225,28,90)); 
+			end
+		else If mod(num[7],10) = 0 then begin
+			plotBarNumTxt = text_new(Date[plot_n_bars_back]
+					,Time[plot_n_bars_back]
+					,round(SwingHiObject[RightStrength],2)-(minUnitPriceChange * (plot_location+70))
+					,barClassStr//numToStr(plot_value,0)
+						);
+			Text_SetStyle(plotBarNumTxt,2,1);
+			text_setcolor(plotBarNumTxt,RGB(225,28,90)); 
+			end
+		else If mod(num[8],10) = 0 then begin
+			plotBarNumTxt = text_new(Date[plot_n_bars_back]
+					,Time[plot_n_bars_back]
+					,round(SwingHiObject[RightStrength],2)-(minUnitPriceChange * (plot_location+80))
+					,barClassStr//numToStr(plot_value,0)
+						);
+			Text_SetStyle(plotBarNumTxt,2,1);
+			text_setcolor(plotBarNumTxt,RGB(225,28,90)); 
+			end
+		else If mod(num[9],10) = 0 then begin
+			plotBarNumTxt = text_new(Date[plot_n_bars_back]
+					,Time[plot_n_bars_back]
+					,round(SwingHiObject[RightStrength],2)-(minUnitPriceChange * (plot_location+90))
+					,barClassStr//numToStr(plot_value,0)
+						);
+			Text_SetStyle(plotBarNumTxt,2,1);
+			text_setcolor(plotBarNumTxt,RGB(225,28,90)); 
+			end
+		else begin
+			plotBarNumTxt = text_new(Date[plot_n_bars_back]
+					,Time[plot_n_bars_back]
+					,round(SwingHiObject[RightStrength],1)-(minUnitPriceChange * 105)
+					,"[0]"
+						);
+			Text_SetStyle(plotBarNumTxt,2,1);
+			text_setcolor(plotBarNumTxt,RGB(225,28,90)); 
+		
+		end;
+	end;
+
+
+
+	//*****************************************************
+	//************ AC oscillator ********************* 
+	//*****************************************************
+	If CurrentBar > plot_n_bars_back  Then Begin
+		//call indicator function ********************
+		Var: double MaTEMA_SMALL(0), double MaTEMA_MED(0), double MaTEMA_BIG(0), double MaTEMA_BX(0),MaTEMA_BXL(0);
+			MaTEMA_SMALL = averagefc(Close,indLengthA);
+			MaTEMA_MED = averagefc(Close,indLengthB);
+			MaTEMA_BIG = averagefc(Close,indLengthC);
+			MaTEMA_BX = averagefc(Close,indLengthD);
+			MaTEMA_BXL = averagefc(Close,indLengthE);
+
+		//scale and normalize features, (indicator results) ********************
+		Var: double MaTEMA_SMALL_NORM(0),double MaTEMA_MED_NORM(0),double MaTEMA_BIG_NORM(0),double MaTEMA_BX_NORM(0),double MaTEMA_BXL_NORM(0);
+			MaTEMA_SMALL_NORM = NormalizeData(MaTEMA_SMALL, lookBackLength, scaleLimit, scaleFloor);
+			MaTEMA_MED_NORM = NormalizeData(MaTEMA_MED, lookBackLength, scaleLimit, scaleFloor);
+			MaTEMA_BIG_NORM = NormalizeData(MaTEMA_BIG, lookBackLength, scaleLimit, scaleFloor);
+			MaTEMA_BX_NORM = NormalizeData(MaTEMA_BX, lookBackLength, scaleLimit, scaleFloor);
+			MaTEMA_BXL_NORM = NormalizeData(MaTEMA_BXL, lookBackLength, scaleLimit, scaleFloor);
+
+		//categorize features, (indicator results)*****************************
+		Var: double MaTEMAindSMALL (0),double MaTEMAindMED (0),double MaTEMAindBIG (0),double MaTEMAindBX (0),double MaTEMAindBXL (0);
+			If UseBucketData Then Begin
+				MaTEMAindSMALL = BucketData(MaTEMA_SMALL_NORM,intervalValue,intervalLimit);
+				MaTEMAindMED = BucketData(MaTEMA_MED_NORM,intervalValue,intervalLimit);
+				MaTEMAindBIG = BucketData(MaTEMA_BIG_NORM,intervalValue,intervalLimit);
+				MaTEMAindBX = BucketData(MaTEMA_BX_NORM,intervalValue,intervalLimit);
+				MaTEMAindBXL = BucketData(MaTEMA_BXL_NORM,intervalValue,intervalLimit);
+			End
+			Else 
+				MaTEMAindSMALL = MaTEMA_SMALL_NORM;
+				MaTEMAindMED = MaTEMA_MED_NORM;
+				MaTEMAindBIG = MaTEMA_BIG_NORM;
+				MaTEMAindBX = MaTEMA_BX_NORM;
+				MaTEMAindBXL = MaTEMA_BXL_NORM;
+	End;
+	
+var: int blah(0);
+blah = 0;
+
+
+if Currentbar > plot_n_bars_back then begin	
+	Print(File("C:\Users\Neal\Documents\www.DAYTRADINGLOGIC.com\_neal\swing\EasyLanguage\blah.csv")
+		,"",NumToStr(Currentbar,0)
+		,",",Numtostr(seriesBarNumber,0)
+		,",",Numtostr(plot_n_bars_back,0)
+		,","+barClassStr
+		,",",Numtostr(Swing_Size,5)
+		,",",Numtostr(BarCount,0)
+		,","+FormatDate( "yyyy-MM-dd", ElDateToDateTime( Date[plot_n_bars_back] ) )
+		,","+FormatTime("HH",DateToJulian(Date[plot_n_bars_back])+(TimeToMinutes(Time[plot_n_bars_back]) / 60 / 24 ))+":"+FormatTime("mm",DateToJulian(Date[plot_n_bars_back])+(TimeToMinutes(Time[plot_n_bars_back]) / 60 / 24 ))+":"+FormatTime("ss",DateToJulian(Date[plot_n_bars_back])+(TimeToMinutes(Time[plot_n_bars_back]) / 60 / 24 ))
+		,",",Numtostr(Open[plot_n_bars_back],8)
+		,",",Numtostr(High[plot_n_bars_back],8)
+		,",",Numtostr(Low[plot_n_bars_back],8)
+		,",",Numtostr(Close[plot_n_bars_back],8)
+		,",",NumToStr(MaTEMAindSMALL[plot_n_bars_back],5)
+		,",",NumToStr(MaTEMAindMED[plot_n_bars_back],5)
+		,",",NumToStr(MaTEMAindBIG[plot_n_bars_back],5)
+		,",",NumToStr(MaTEMAindBX[plot_n_bars_back],5)
+		,",",NumToStr(MaTEMAindBXL[plot_n_bars_back],5)
+		//+ NewLine
+		);
+	end;
+	
