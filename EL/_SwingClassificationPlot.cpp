@@ -26,6 +26,10 @@ vars:
 	,int BarsAgoSLoBar(0)
 	,int SwingHiAtBarNum(0)
 	,int SwingLoAtBarNum(0)
+	,int PriorSwingHiAtBarNum(0)
+	,int BarsAgoPriorSHiBar(0)
+	,int PriorSwingLoAtBarNum(0)
+	,int BarsAgoPriorSLoBar(0)
 	,int lastSwingHiBarNum(0)
 	,int lastSwingLoBarNum(0)
 	,counterSH(0)
@@ -283,6 +287,7 @@ if condition1 and calcSwingHi then begin
 			if rightPatternCounter = RightStrength then begin 
 
 				SwingHiAtBarNum = seriesBarNumber-RightStrength;
+				PriorSwingHiAtBarNum = SwingHiAtBarNum - swingHi[0,0];
 				swingBarHiCount = swingLo[0,0]-swingHi[1,0];
 				lastSwingHiBarNum = seriesBarNumber-RightStrength;
 	
@@ -339,6 +344,7 @@ if condition1 and calcSwingHi then begin
 		end;
 		
 		BarsAgoSHiBar = seriesBarNumber-SwingHiAtBarNum;
+		BarsAgoPriorSHiBar = seriesBarNumber-PriorSwingHiAtBarNum;
 		rightStengthCounter = 1;
 		rightPatternCounter = 0; 
 		rightHiPatternExist = False;	
@@ -379,6 +385,7 @@ if condition1 and calcSwingLo then begin
 			if rightPatternCounter = RightStrength then begin 
 
 				SwingLoAtBarNum = seriesBarNumber-RightStrength;
+				PriorSwingLoAtBarNum = SwingLoAtBarNum - swingLo[0,0];
 				swingBarLoCount = swingHi[0,0]-swingLo[1,0];
 				lastSwingLoBarNum = seriesBarNumber-RightStrength;
 									
@@ -436,6 +443,7 @@ if condition1 and calcSwingLo then begin
 		end; 
 		
 		BarsAgoSLoBar = seriesBarNumber-SwingLoAtBarNum;
+		BarsAgoPriorSLoBar = seriesBarNumber-PriorSwingLoAtBarNum;
 		rightStengthCounter = 1;
 		rightPatternCounter = 0;
 		rightLoPatternExist = False; 	
@@ -674,57 +682,68 @@ end;
  settingMaxBarsBack = MaxBarsBack + 1 ;
 }	
 vars: Swing_Size(0),BarCount(0);
-			
-if 1 = 0 then begin
-	barClassStr = "1";
-end
-else if BarsAgoSHiBar[0] - RightStrength  = 0 then begin
-	barClassStr = "Hi-Entry-P0 "+NumToStr(plot_value,0)+" "+NumToStr(SwingHi_Size,4);
-	Swing_Size = SwingHi_Size;
-	BarCount = SwingHi_BarCount;
-end
-else if BarsAgoSHiBar[0] - (RightStrength -1)= 0 then begin
-	barClassStr = "Hi-Entry-P1 "+NumToStr(plot_value,0)+" "+NumToStr(SwingHi_Size,4);
-	Swing_Size = SwingHi_Size;
-	BarCount = SwingHi_BarCount;
-end
-else if BarsAgoSHiBar[0] - (RightStrength +1)= 0 then begin
-	barClassStr = "Hi-Entry-M1 "+NumToStr(plot_value,0)+" "+NumToStr(SwingHi_Size,4);
-	Swing_Size = SwingHi_Size;
-	BarCount = SwingHi_BarCount;
-end
-else if BarsAgoSHiBar[0] - (RightStrength +2)= 0 then begin
-	barClassStr = "Hi-Entry-M2 "+NumToStr(plot_value,0)+" "+NumToStr(SwingHi_Size,4);
-	Swing_Size = SwingHi_Size;
-	BarCount = SwingHi_BarCount;
-end
 
-else if BarsAgoSLoBar[0] - RightStrength = 0 then begin
-	barClassStr = "Lo-Entry-P0 "+NumToStr(plot_value,0)+" "+NumToStr(SwingLo_Size,4);
-	Swing_Size = SwingLo_Size;
-	BarCount = SwingLo_BarCount;
-end
-else if BarsAgoSLoBar[0] - (RightStrength -1)= 0 then begin
-	barClassStr = "Lo-Entry-P1 "+NumToStr(plot_value,0)+" "+NumToStr(SwingLo_Size,4);
-	Swing_Size = SwingLo_Size;
-	BarCount = SwingLo_BarCount;
-end
-else if BarsAgoSLoBar[0] - (RightStrength +1)= 0 then begin
-	barClassStr = "Lo-Entry-M1 "+NumToStr(plot_value,0)+" "+NumToStr(SwingLo_Size,4);
-	Swing_Size = SwingLo_Size;
-	BarCount = SwingLo_BarCount;
-end
-else if BarsAgoSLoBar[0] - (RightStrength +2)= 0 then begin
-	barClassStr = "Lo-Entry-M2 "+NumToStr(plot_value,0)+" "+NumToStr(SwingLo_Size,4);
-	Swing_Size = SwingLo_Size;
-	BarCount = SwingLo_BarCount;
-end
-else begin
-	barClassStr = "0";
-	Swing_Size = 0;
-	BarCount = 0;
-end;	
-
+if SwingHiAtBarNum[4] > 0 and SwingLoAtBarNum[4] > 0 then begin		
+	if 1 = 0 then begin
+		barClassStr = "1";
+	end	
+	else if seriesBarNumber - swingHi[0,0] = RightStrength + 0 then begin//BarsAgoSHiBar[0] - RightStrength +0= 0 
+		barClassStr = "Hi-Entry-P0 "+NumToStr(plot_value,0)+" "+NumToStr(SwingHi_Size,4);
+		Swing_Size = SwingHi_Size;
+		BarCount = SwingHi_BarCount;
+	end
+	else if seriesBarNumber - swingHi[0,0] = RightStrength - 1 then begin//BarsAgoSHiBar[0] - (RightStrength -1)= 0 then begin
+		barClassStr = "Hi-Entry-M1 "+NumToStr(plot_value,0)+" "+NumToStr(SwingHi_Size,4);
+		Swing_Size = SwingHi_Size;
+		BarCount = SwingHi_BarCount;
+	end
+	else if seriesBarNumber - swingHi[0,0] = RightStrength + 1 then begin//BarsAgoSHiBar[0] - (RightStrength +1)= 0 then begin
+		barClassStr = "Hi-Entry-P1 "+NumToStr(plot_value,0)+" "+NumToStr(SwingHi_Size,4);
+		Swing_Size = SwingHi_Size;
+		BarCount = SwingHi_BarCount;
+	end
+	else if seriesBarNumber - swingHi[0,0] = RightStrength + 2 then begin//BarsAgoSHiBar[0] - (RightStrength +2)= 0 then begin
+		barClassStr = "Hi-Entry-P2 "+NumToStr(plot_value,0)+" "+NumToStr(SwingHi_Size,4);
+		Swing_Size = SwingHi_Size;
+		BarCount = SwingHi_BarCount;
+	end
+	else if seriesBarNumber - swingHi[0,0] = RightStrength + 3 then begin//BarsAgoSHiBar[0] - (RightStrength +3)= 0 then begin
+		barClassStr = "Hi-Entry-P3 "+NumToStr(plot_value,0)+" "+NumToStr(SwingHi_Size,4);
+		Swing_Size = SwingHi_Size;
+		BarCount = SwingHi_BarCount;
+	end
+	
+	else if seriesBarNumber - swingLo[0,0] = RightStrength + 0 then begin//BarsAgoSLoBar[0] - RightStrength +0= 0 then begin
+		barClassStr = "Lo-Entry-P0 "+NumToStr(plot_value,0)+" "+NumToStr(SwingLo_Size,4);
+		Swing_Size = SwingLo_Size;
+		BarCount = SwingLo_BarCount;
+	end
+	else if seriesBarNumber - swingLo[0,0] = RightStrength - 1 then begin//BarsAgoSLoBar[0] - (RightStrength -1)= 0 then begin
+		barClassStr = "Lo-Entry-M1 "+NumToStr(plot_value,0)+" "+NumToStr(SwingLo_Size,4);
+		Swing_Size = SwingLo_Size;
+		BarCount = SwingLo_BarCount;
+	end
+	else if seriesBarNumber - swingLo[0,0] = RightStrength + 1 then begin//BarsAgoSLoBar[0] - (RightStrength +1)= 0 then begin
+		barClassStr = "Lo-Entry-P1 "+NumToStr(plot_value,0)+" "+NumToStr(SwingLo_Size,4);
+		Swing_Size = SwingLo_Size;
+		BarCount = SwingLo_BarCount;
+	end
+	else if seriesBarNumber - swingLo[0,0] = RightStrength + 2 then begin//BarsAgoSLoBar[0] - (RightStrength +2)= 0 then begin
+		barClassStr = "Lo-Entry-P2 "+NumToStr(plot_value,0)+" "+NumToStr(SwingLo_Size,4);
+		Swing_Size = SwingLo_Size;
+		BarCount = SwingLo_BarCount;
+	end
+	else if seriesBarNumber - swingLo[0,0] = RightStrength + 3 then begin//BarsAgoSLoBar[0] - (RightStrength +3)= 0 then begin
+		barClassStr = "Lo-Entry-P3 "+NumToStr(plot_value,0)+" "+NumToStr(SwingLo_Size,4);
+		Swing_Size = SwingLo_Size;
+		BarCount = SwingLo_BarCount;
+	end
+	else begin
+		barClassStr = "0";
+		Swing_Size = 0;
+		BarCount = 0;
+	end;	
+end;
 
 	//plot bar numbers
 	if ShowBarNumbers and swingLo[1,1] > 0 and swingHi[1,1] > 0 then begin
@@ -868,7 +887,15 @@ end;
 				MaTEMAindBX = MaTEMA_BX_NORM;
 				MaTEMAindBXL = MaTEMA_BXL_NORM;
 	End;
-	
+	//rateOfChange = (x / x[old] - 1 ) * 100
+	//percentChange = ( (x - x[old]) / x[old]-1 ) * 100
+{	If MaTEMAindSMALL[5] > 0 and MaTEMAindMED[5]  > 0 and MaTEMAindBIG[5]  > 0 and MaTEMAindBX[5]  > 0 and MaTEMAindBXL[5]  > 0 then begin
+		Plot10(round((MaTEMAindSMALL[0]-MaTEMAindSMALL[5])/MaTEMAindSMALL[5]-1,5),"MaTEMASMALL");
+		Plot20(round((MaTEMAindMED[0]-MaTEMAindMED[5])/MaTEMAindMED[5]-1,5),"MaTEMAindMED");
+		Plot30(round((MaTEMAindBIG[0]-MaTEMAindBIG[5])/MaTEMAindBIG[5]-1,5),"MaTEMAindBIG");
+		Plot40(round((MaTEMAindBX[0]-MaTEMAindBX[5])/MaTEMAindBX[5]-1,5),"MaTEMAindBX");
+		Plot50(round((MaTEMAindBXL[0]-MaTEMAindBXL[5])/MaTEMAindBXL[5]-1,5),"MaTEMAindBXL");
+	end;}
 var: int blah(0);
 blah = 0;
 
@@ -892,6 +919,41 @@ if Currentbar > plot_n_bars_back then begin
 		,",",NumToStr(MaTEMAindBIG[plot_n_bars_back],5)
 		,",",NumToStr(MaTEMAindBX[plot_n_bars_back],5)
 		,",",NumToStr(MaTEMAindBXL[plot_n_bars_back],5)
+		//+ NewLine
+		);
+	end;
+
+ if Currentbar > plot_n_bars_back and swingHi[1,0] > 0 and swingLo[1,0] > 0 then begin	
+	Print(File("C:\Users\Neal\Documents\www.DAYTRADINGLOGIC.com\_neal\swing\EasyLanguage\blah_BarCounts.csv")
+		,""+barClassStr
+		,",",Numtostr(seriesBarNumber,0)// seriesBarNumber = CurrentBar + settingMaxBarsBack; 
+		,",",Numtostr(RightStrength,0)
+		,",",Numtostr(plot_n_bars_back,0) //(swingHi[0,0]-swingHi[1,0])+RightStrength; or (swingLo[0,0]-swingLo[1,0])+RightStrength;
+		,",",Numtostr(swingHi[0,0],0)
+		,",",Numtostr(swingHi[1,0],0)
+		,",",Numtostr(swingLo[0,0],0)
+		,",",Numtostr(swingLo[1,0],0)
+		,",",Numtostr(PriorSwingHiAtBarNum,0)
+		,",",Numtostr(BarsAgoPriorSHiBar,0)
+		,",",Numtostr(PriorSwingLoAtBarNum,0)
+		,",",Numtostr(BarsAgoPriorSLoBar,0)
+		,",",Numtostr(BarsAgoSHiBar,0)//BarsAgoSHiBar = seriesBarNumber-SwingHiAtBarNum;
+		,",",Numtostr(BarsAgoSLoBar,0)// BarsAgoSLoBar = seriesBarNumber-SwingLoAtBarNum;
+		,",",Numtostr(SwingHiAtBarNum,0)//SwingHiAtBarNum = seriesBarNumber-RightStrength;
+		,",",Numtostr(SwingLoAtBarNum,0)//SwingLoAtBarNum = seriesBarNumber-RightStrength;
+		,",",Numtostr(BarsAgoSHiBar[0] - RightStrength,0)
+		,",",Numtostr(BarsAgoSLoBar[0] - RightStrength,0)
+		,",",Numtostr(BarsAgoClassHi,0)//BarsAgoClassHi = seriesBarNumber-(swingLo[0,0]-swingHi[1,0]);
+		,",",Numtostr(BarsAgoClassLo,0)//BarsAgoClassLo = seriesBarNumber-(swingHi[0,0]-swingLo[1,0]);
+		,",",Numtostr(Swing_Size,5)
+		,",",Numtostr(BarCount,0)//SwingHi_BarCount = swingLo[0,0]-swingHi[1,0]; or SwingLo_BarCount = swingHi[0,0]-swingLo[1,0];
+		,","+FormatDate( "yyyy-MM-dd", ElDateToDateTime( Date[plot_n_bars_back] ) )
+		,","+FormatTime("HH",DateToJulian(Date[plot_n_bars_back])+(TimeToMinutes(Time[plot_n_bars_back]) / 60 / 24 ))+":"+FormatTime("mm",DateToJulian(Date[plot_n_bars_back])+(TimeToMinutes(Time[plot_n_bars_back]) / 60 / 24 ))+":"+FormatTime("ss",DateToJulian(Date[plot_n_bars_back])+(TimeToMinutes(Time[plot_n_bars_back]) / 60 / 24 ))
+		,",",Numtostr(Open[plot_n_bars_back],8)
+		,",",Numtostr(High[plot_n_bars_back],8)
+		,",",Numtostr(Low[plot_n_bars_back],8)
+		,",",Numtostr(Close[plot_n_bars_back],8)
+		,",",NumToStr(Currentbar,0)
 		//+ NewLine
 		);
 	end;
