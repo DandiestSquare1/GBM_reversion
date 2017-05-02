@@ -1,5 +1,5 @@
 // Function returns percentChange as a double = ( ( (New-Old)/Old ) ) * 100
-{
+{/**
 IF(NEW > 0 and NEW > OLD,
     IF(OLD <> 0, (NEW - OLD)/ ABS(OLD), (NEW-OLD)/(1) ),
     IF(OLD <> 0, (OLD - NEW)/ NEW, (NEW-OLD)/(1) )
@@ -9,7 +9,7 @@ IF(NEW > 0 and NEW > OLD,
     IF(A2<>0, (B2-A2)/ABS(A2), (B2-A2)/(1) ),
     IF(A2<>0, (A2-B2)/B2, (B2-A2)/(1) )
 )
-}
+**/}
 inputs: double dataSeries( numericseries ), //price or indicator values
 		int lookBackLength( numericsimple ),//12
 		int roundPrecision(numericsimple);//5
